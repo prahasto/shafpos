@@ -20,9 +20,10 @@ class Pos extends MY_Controller {
 		$npaid=0;
 		$myJSON = json_decode($arr);
 		
-		$date = $eid ? $this->input->post('date') : date('Y-m-d H:i:s');
+		$date = date('Y-m-d');
+		
         $dates = date('dmY',strtotime($date));
-        //$salesreturno =  $this->pos_model->getLastNo($dates,$this->site->getStoreCode());
+        $salesreturno =  $this->pos_model->getLastNo($dates,$this->site->getStoreCode(),'R');
 		$customer_id = 1;	
 		$customer='joni wkwk';
 		$grand_total=1000;
@@ -52,7 +53,7 @@ class Pos extends MY_Controller {
 				   $npaid=$npaid+$rtotal;
                 }
 		$data = array(
-                'salesno' => 'R002',//$salesreturno,
+                'salesno' => $salesreturno, 
                 'date' => $date,
                 'customer_id' => $customer_id,
                 'customer_name' => $customer,
@@ -79,7 +80,7 @@ class Pos extends MY_Controller {
 								
 				//$this->session->set_flashdata('message', 'wers');
 				$sale = $this->pos_model->addretur($data,$products);
-		echo json_encode(array('msg' =>$sale ));
+		echo json_encode(array('msg' =>$salesreturno));
 	}
 
     function getSalesbyID(){
@@ -174,7 +175,7 @@ class Pos extends MY_Controller {
            // $date = $eid ? $this->input->post('date') : date('Y-m-d H:i:s');salesdate
             $date = $eid ? $this->input->post('date') : date('Y-m-d H:i:s');
             $dates = date('dmY',strtotime($date));
-            $salesno =  $this->pos_model->getLastNo($dates,$this->site->getStoreCode(),12);
+            $salesno =  $this->pos_model->getLastNo($dates,$this->site->getStoreCode(),'');
             $customer_id = $this->input->post('customer_id');
             $customer_details = $this->pos_model->getCustomerByID($customer_id);
             $customer = $customer_details->name;
@@ -661,6 +662,24 @@ class Pos extends MY_Controller {
             echo NULL;
         }
 
+    }
+	
+	function autocompleteretursno() {
+        $term = $this->input->get('term', TRUE);
+
+        $rows = $this->pos_model->getReturNo($term);
+        if ($rows) {
+            foreach ($rows as $row) {
+                $cust[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id,
+                    'name' => $row->salesno,
+                    'label' => $row->salesno,
+					 'amount'=>$this->tec->formatDecimal($row->grand_total)
+                    );
+            }
+            echo json_encode($cust);
+        } else {
+            echo json_encode(array(array('id' => 0, 'label' => lang('no_match_found'), 'value' => $term)));
+        }
     }
 
     function autocompletesalesno() {

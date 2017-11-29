@@ -17,6 +17,30 @@ class Pos_model extends CI_Model
             return array();
         }
     }
+	
+	public function getReturNo($term, $limit = 10) {
+
+        //$this->db->select("{$this->db->dbprefix('sales')}.*");
+
+        $this->db->select('id,salesno,customer_name,grand_total');
+		$this->db->where('usr_tipetrans_id', 18);
+        $this->db->like('salesno', $term);
+        //$this->db->or_like('customer_name', $term);
+		//$this->db->limit($limit);
+		
+
+        $q = $this->db->get('tec_sales');
+		/*$q = $this->db->query('select id,salesno,customer_name from tec_sales
+		where usr_tipetrans_id = 18 and ');*/
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
+
 
     public function getSalesNo($term, $limit = 10) {
 
@@ -64,8 +88,8 @@ class Pos_model extends CI_Model
         return FALSE;
     }
 
-    public function getLastNo($storecode=null,$date=null)
-    //public function getLastNo($date,$orgCode,$tipetransid)
+    //public function getLastNo($storecode=null,$date=null,$typetrans)
+    public function getLastNo($date,$orgCode,$typetrans='')
     {
        $lastno ='';
       // $tglKode=date('dmY',strtotime($date));
@@ -89,8 +113,9 @@ class Pos_model extends CI_Model
            }
 
       // $lastno=$row->counter;
+	     
        }
-       return $lastno;
+       return $lastno.$typetrans;
     }
 
     public function getProductNames($term, $limit = 10) {
@@ -546,7 +571,7 @@ class Pos_model extends CI_Model
 			 }   
                 
             
-			 return $sale_id;
+			 return $data['salesno'];
 		}
 		  return false;
 	}

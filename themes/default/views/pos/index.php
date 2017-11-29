@@ -877,7 +877,7 @@
                                     <?= lang("paying_by", "paid_by"); ?>
                                     
                                     <?php
-                                    $paid[1] = "cash";
+                                    $paid[""] = "cash";
                                     foreach($paidBys as $paidBy) {
                                         $paid[$paidBy->paid_by_id] = $paidBy->paid_by;
                                     }
@@ -908,7 +908,7 @@
 
                                 <div class="form-group ">
                                     <?php
-                                    $bankname[""] = "";
+                                    $bankname[""] = "Bank";
                                     foreach($banks as $bank) {
                                         $bankname[$bank->bank_id] = $bank->bank;
                                     }
@@ -933,7 +933,7 @@
                                 <div class="col-xs-5">
 								    <div class="form-group ">
                                     <?php
-                                    $edcname[""] = "";
+                                    $edcname[""] = "Merchant";
                                     foreach($edcs as $edc) {
                                         $edcname[$edc->edc_id] = $edc->edc;
                                     }
@@ -960,6 +960,7 @@
                                 <div class="form-group   col-xs-10">
                                     <input type="text" id="reffnumber_input" class="form-control reffnumber_input"
                                            placeholder="Input Reff Number"/>
+									<input type="text" name="searchreturno" id="searchreturno" class="form-control ui-autocomplete-input" placeholder="Search Retur No..." autocomplete="on">
                                 </div>
                             </div>
                         </div>
