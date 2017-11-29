@@ -26,6 +26,7 @@ class Pos_model extends CI_Model
 		$this->db->where('status', 'paid');
         $this->db->like('salesno', $term);
         $this->db->or_like('customer_name', $term);
+		$this->db->limit($limit);
 		
 
         $q = $this->db->get('tec_sales');

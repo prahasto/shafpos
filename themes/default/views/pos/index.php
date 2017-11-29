@@ -1185,16 +1185,14 @@
                             </div>
                             <div style="clear:both;"></div>
                             <div id="totaldiv">
-                                <table id="totaltbl" class="table table-condensed totals" style="margin-bottom:10px;">
+                                <table id="totaltblretur" class="table table-condensed totals" style="margin-bottom:10px;">
                                     <tbody>
                                     <tr class="info">
                                         <td width="25%"><?=lang('total_items')?></td>
-                                        <td class="text-right" style="padding-right:10px;"><span id="countretur">0</span></td>
+                                        <td class="text-right" style="padding-right:10px;"><span id="rcountretur">0</span></td>
                                         <td width="25%"><?=lang('total')?></td>
-                                        <td class="text-right" colspan="2"><span id="totalretur">0</span></td>
+                                        <td class="text-right" colspan="2"><span id="rtotalretur">0</span></td>
                                     </tr>
-
-
                                     </tbody>
                                 </table>
                             </div>
