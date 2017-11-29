@@ -1,0 +1,185 @@
+/*
+* Author : Ali Aboussebaba
+* Email : bewebdeveloper@gmail.com
+* Website : http://www.bewebdeveloper.com
+*/
+
+function send_request() {
+	var name_ = $('#rt_name').val();
+	var email_ = $('#rt_email').val();
+	var description_ = $('#rt_description').val();
+	var id_ = $('#rt_id').val();
+
+	// Validation ***************************
+	if (name_ == '') {
+		$('#rt_name').addClass('invalide');
+		$('#rt_response_id').html('<img src="images/error.png"> The name is required');
+		return false;
+	} else {
+		$('#rt_name').removeClass('invalide');
+		$('#rt_response_id').html('');
+	}
+	if (email_ == '') {
+		$('#rt_email').addClass('invalide');
+		$('#rt_response_id').html('<img src="images/error.png"> The email is required');
+		return false;
+	} else {
+		var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		if (regex.test(email_)) {
+			$('#rt_email').removeClass('invalide');
+			$('#rt_response_id').html('');
+		} else {
+			$('#rt_email').addClass('invalide');
+			$('#rt_response_id').html('<img src="images/error.png"> The email is incorrect');
+			return false;
+		}
+	}
+	if (description_ == '') {
+		$('#rt_description').addClass('invalide');
+		$('#rt_response_id').html('<img src="images/error.png"> The description is required');
+		return false;
+	} else {
+		$('#rt_description').removeClass('invalide');
+		$('#rt_response_id').html('');
+	}
+
+	// begin traitment ************************
+	$('#rt_response_id').html('<img src="images/loader.gif"> Sending your request...');
+	$.ajax({
+		url: 'send-request',
+		type: 'POST',
+		data: {name:name_, email:email_, subject:'Request Tutorial', message:description_, id:id_},
+		success:function(data) {
+			$('#rt_response_id').html('<img src="images/success.png"> Sent successfully');
+			$('#rt_name').val('');
+			$('#rt_email').val('');
+			$('#rt_description').val('');
+		}
+	});
+}
+
+function send_contact() {
+	var name_ = $('#contact_name').val();
+	var email_ = $('#contact_email').val();
+	var subject_ = $('#contact_subject').val();
+	var message_ = $('#contact_message').val();
+	var id_ = $('#contact_id').val();
+
+	// Validation ***************************
+	if (name_ == '') {
+		$('#contact_name').addClass('invalide');
+		$('#contact_response_id').html('<img src="images/error.png"> The name is required');
+		return false;
+	} else {
+		$('#contact_name').removeClass('invalide');
+		$('#contact_response_id').html('');
+	}
+	if (email_ == '') {
+		$('#contact_email').addClass('invalide');
+		$('#contact_response_id').html('<img src="images/error.png"> The email is required');
+		return false;
+	} else {
+		var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		if (regex.test(email_)) {
+			$('#contact_email').removeClass('invalide');
+			$('#contact_response_id').html('');
+		} else {
+			$('#contact_email').addClass('invalide');
+			$('#contact_response_id').html('<img src="images/error.png"> The email is incorrect');
+			return false;
+		}
+	}
+	if (subject_ == '') {
+		$('#contact_subject').addClass('invalide');
+		$('#contact_response_id').html('<img src="images/error.png"> The subject is required');
+		return false;
+	} else {
+		$('#contact_subject').removeClass('invalide');
+		$('#contact_response_id').html('');
+	}
+	if (message_ == '') {
+		$('#contact_message').addClass('invalide');
+		$('#contact_response_id').html('<img src="images/error.png"> The message is required');
+		return false;
+	} else {
+		$('#contact_message').removeClass('invalide');
+		$('#contact_response_id').html('');
+	}
+
+	// begin traitment ************************
+	$('#contact_response_id').html('<img src="images/loader.gif"> Sending your message...');
+	$.ajax({
+		url: 'send-request',
+		type: 'POST',
+		data: {name:name_, email:email_, subject:subject_, message:message_, id:id_},
+		success:function(data){
+			$('#contact_response_id').html('<img src="images/success.png"> Sent successfully');
+			$('#contact_name').val('');
+			$('#contact_email').val('');
+			$('#contact_subject').val('');
+			$('#contact_message').val('');
+		}
+	});
+}
+
+
+function nl_subscribe() {
+	var email_ = $('#nl_email').val();
+	var id_ = $('#nl_id').val();
+
+	if (email_ == '') {
+		$('#nl_email').addClass('invalide');
+		$('#nl_response_id').html('<img src="images/error.png"> The email is required');
+		return false;
+	} else {
+		var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		if (regex.test(email_)) {
+			$('#nl_email').removeClass('invalide');
+			$('#nl_response_id').html('');
+		} else {
+			$('#nl_email').addClass('invalide');
+			$('#nl_response_id').html('<img src="images/error.png"> The email is incorrect');
+			return false;
+		}
+	}
+
+	// begin traitment ************************
+	$('#nl_response_id').html('<img src="images/loader.gif"> Subscribing...');
+	$.ajax({
+		url: 'nl-subscribe',
+		type: 'POST',
+		data: {email:email_, id:id_},
+		success:function(data){
+			$('#nl_response_id').html('<img src="images/success.png"> Subscribed successfully');
+			$('#nl_email').val('');
+		}
+	});
+}
+
+// disqus **********************************
+var disqus_shortname = 'bedeveloper';
+(function () {
+	var s = document.createElement('script'); s.async = true;
+	s.type = 'text/javascript';
+	s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+	(document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+
+// facebook ****************************
+(function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) return;
+	js = d.createElement(s); js.id = id;
+	js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+	fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+// twitter ****************************
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+
+// google plus ****************************
+(function() {
+	var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	po.src = 'https://apis.google.com/js/platform.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
