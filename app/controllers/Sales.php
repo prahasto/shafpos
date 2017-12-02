@@ -40,6 +40,7 @@ class Sales extends MY_Controller {
             $this->datatables->where('created_by', $this->session->userdata('user_id'));
         }
         $this->datatables->where('store_id', $this->session->userdata('store_id'));
+         $this->datatables->where('usr_tipetrans_id', 12);
         $this->datatables->add_column("Actions", 
 		"<div class='text-center'>
 		<div class='btn-group'>
@@ -57,7 +58,49 @@ class Sales extends MY_Controller {
         echo $this->datatables->generate();
 
     }
+	
+	function get_retur() {
 
+        $this->load->library('datatables');
+        if ($this->db->dbdriver == 'sqlite3') {
+            $this->datatables->select("id, salesno,strftime('%Y-%m-%d %H:%M', date) as date, customer_name, total, total_tax, total_discount, grand_total, paid, status");
+        } else {
+            $this->datatables->select("id, salesno, DATE_FORMAT(date, '%Y-%m-%d %H:%i') as date, customer_name, total, total_tax, total_discount, grand_total, paid, status");
+        }
+        $this->datatables->from('sales');
+        if (!$this->Admin && !$this->session->userdata('view_right')) {
+            $this->datatables->where('created_by', $this->session->userdata('user_id'));
+        }
+        $this->datatables->where('store_id', $this->session->userdata('store_id'));
+         $this->datatables->where('usr_tipetrans_id', 18);
+        $this->datatables->add_column("Actions", 
+		"<div class='text-center'>
+		<div class='btn-group'>
+		<a href='" . site_url('pos/view/$1/1') . "' title='".lang("view_invoice")."' 
+		class='tip btn btn-primary btn-xs' data-toggle='ajax-modal'>
+		<i class='fa fa-list'></i></a> 
+		<a href='".site_url('sales/payments/$1')."' title='" . lang("view_payments") . "' class='tip 
+		btn btn-primary btn-xs' data-toggle='ajax'><i class='fa fa-money'></i></a> 
+		<a href='".site_url('sales/add_payment/$1')."' title='" . lang("add_payment") . "' class='tip btn 
+		btn-primary btn-xs' data-toggle='ajax'>
+		<i class='fa fa-briefcase'></i></a> 
+		<a href='" . site_url('pos/?edit=$1') . "' title='".lang("edit_invoice")."' class='tip btn btn-warning btn-xs'><i class='fa fa-edit'></i></a> <a href='" . site_url('sales/delete/$1') . "' onClick=\"return confirm('". lang('alert_x_sale') ."')\" title='".lang("delete_sale")."' class='tip btn btn-danger btn-xs'><i class='fa fa-trash-o'></i></a></div></div>", "id");
+
+        // $this->datatables->unset_column('id');
+        echo $this->datatables->generate();
+
+    }
+    
+    function retur() {
+		$this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        $this->data['page_title'] = lang('retur');
+        $bc = array(array('link' => '#', 'page' => lang('retur')));
+        $meta = array('page_title' => lang('retur'), 'bc' => $bc);
+        $this->page_construct('sales/retur_list', $this->data, $meta);
+		
+   
+    }	
+	 
     function opened() {
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['page_title'] = lang('opened_bills');
@@ -322,6 +365,29 @@ class Sales extends MY_Controller {
 			$this->input->post('status', TRUE));
             $this->session->set_flashdata('message', lang('status_updated'));
             redirect('sales');
+
+        } else {
+
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('sales');
+
+        }
+    }
+	
+	 public function statusretur() {
+        if ( ! $this->Admin) {
+            $this->session->set_flashdata('warning', lang('access_denied'));
+            redirect('sales');
+        }
+        $this->form_validation->set_rules('sale_id', lang('sale_id'), 'required');
+        $this->form_validation->set_rules('status', lang('status'), 'required');
+
+        if ($this->form_validation->run() == true) {
+
+            $this->sales_model->updateStatusretur($this->input->post('sale_id', TRUE), 
+			$this->input->post('status', TRUE));
+            $this->session->set_flashdata('message', lang('status_updated'));
+            redirect('sales/retur');
 
         } else {
 

@@ -165,6 +165,18 @@ class Site extends CI_Model
         }
         return FALSE;
     }
+
+
+    public function getPaidHtml($paidbyid)
+    {
+        $sql = "select * from usr_paid_by where paid_by_id='".$paidbyid."'";
+        $query = $this->db->query($sql)->result_array();
+        //if( $query->num_rows() > 0 ) {
+            return $query;//->result();
+
+    }
+
+
 	
 	public function getPaidBy() {
 		$sql = "select * from usr_paid_by order by paid_by_id";

@@ -10,148 +10,148 @@
     <script src="<?= $assets ?>plugins/jQuery/jQuery-2.1.4.min.js"></script>
 </head>
 <body class="skin-<?= $Settings->theme_style; ?> sidebar-collapse sidebar-mini pos">
-    <div class="wrapper rtl rtl-inv">
+<div class="wrapper rtl rtl-inv">
 
-        <header class="main-header">
-            <a href="<?= site_url(); ?>" class="logo">
-                <?php if ($store) { ?>
+    <header class="main-header">
+        <a href="<?= site_url(); ?>" class="logo">
+            <?php if ($store) { ?>
                 <span class="logo-mini"><?= $store->code; ?></span>
                 <span class="logo-lg"><?= $store->name == 'SimplePOS' ? 'Simple<b>POS</b>' : $store->name; ?></span>
-                <?php } else { ?>
+            <?php } else { ?>
                 <span class="logo-mini">POS</span>
                 <span class="logo-lg"><?= $Settings->site_name == 'SimplePOS' ? 'Simple<b>POS</b>' : $Settings->site_name; ?></span>
-                <?php } ?>
-            </a>
-            <nav class="navbar navbar-static-top" role="navigation">
-                <ul class="nav navbar-nav pull-left">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="<?= $assets; ?>images/<?= $Settings->selected_language; ?>.png" alt="<?= $Settings->selected_language; ?>"></a>
-                        <ul class="dropdown-menu">
-                            <?php $scanned_lang_dir = array_map(function ($path) {
-                                return basename($path);
-                            }, glob(APPPATH . 'language/*', GLOB_ONLYDIR));
-                            foreach ($scanned_lang_dir as $entry) { ?>
+            <?php } ?>
+        </a>
+        <nav class="navbar navbar-static-top" role="navigation">
+            <ul class="nav navbar-nav pull-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="<?= $assets; ?>images/<?= $Settings->selected_language; ?>.png" alt="<?= $Settings->selected_language; ?>"></a>
+                    <ul class="dropdown-menu">
+                        <?php $scanned_lang_dir = array_map(function ($path) {
+                            return basename($path);
+                        }, glob(APPPATH . 'language/*', GLOB_ONLYDIR));
+                        foreach ($scanned_lang_dir as $entry) { ?>
                             <li><a href="<?= site_url('pos/language/' . $entry); ?>"><img
-                                src="<?= $assets; ?>images/<?= $entry; ?>.png"
-                                class="language-img"> &nbsp;&nbsp;<?= ucwords($entry); ?></a></li>
-                                <?php } ?>
+                                        src="<?= $assets; ?>images/<?= $entry; ?>.png"
+                                        class="language-img"> &nbsp;&nbsp;<?= ucwords($entry); ?></a></li>
+                        <?php } ?>
+                    </ul>
+                </li>
+            </ul>
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <li><a href="#" class="clock"></a></li>
+                    <li><a href="<?= site_url(); ?>"><i class="fa fa-dashboard"></i></a></li>
+                    <?php if ($Admin) { ?>
+                        <li><a href="<?= site_url('settings'); ?>"><i class="fa fa-cogs"></i></a></li>
+                    <?php } ?>
+                    <?php if ($this->db->dbdriver != 'sqlite3') { ?>
+                        <li><a href="<?= site_url('pos/view_bill'); ?>" target="_blank"><i class="fa fa-desktop"></i></a></li>
+                    <?php } ?>
+                    <li class="hidden-xs hidden-sm"><a href="<?= site_url('pos/shortcuts'); ?>" data-toggle="ajax"><i class="fa fa-key"></i></a></li>
+                    <li><a href="<?= site_url('pos/register_details'); ?>" data-toggle="ajax"><?= lang('register_details'); ?></a></li>
+                    <?php if ($Admin) { ?>
+                        <li><a href="<?= site_url('pos/today_sale'); ?>" data-toggle="ajax"><?= lang('today_sale'); ?></a></li>
+                    <?php } ?>
+                    <li><a href="<?= site_url('pos/close_register'); ?>" data-toggle="ajax"><?= lang('close_register'); ?></a></li>
+                    <?php if ($suspended_sales) { ?>
+                        <li class="dropdown notifications-menu" id="suspended_sales">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-bell-o"></i>
+                                <span class="label label-warning"><?=sizeof($suspended_sales);?></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">
+                                    <input type="text" autocomplete="off" data-list=".list-suspended-sales" name="filter-suspended-sales" id="filter-suspended-sales" class="form-control input-sm kb-text clearfix" placeholder="<?= lang('filter_by_reference'); ?>">
+                                </li>
+                                <li>
+                                    <ul class="menu">
+                                        <li class="list-suspended-sales">
+                                            <?php
+                                            foreach ($suspended_sales as $ss) {
+                                                echo '<a href="'.site_url('pos/?hold='.$ss->id).'" class="load_suspended">'.$this->tec->hrld($ss->date).' ('.$ss->customer_name.')<br><div class="bold">'.$ss->hold_ref.'</div></a>';
+                                            }
+                                            ?>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="footer"><a href="<?= site_url('sales/opened'); ?>"><?= lang('view_all'); ?></a></li>
                             </ul>
                         </li>
-                    </ul>
-                    <div class="navbar-custom-menu">
-                        <ul class="nav navbar-nav">
-                            <li><a href="#" class="clock"></a></li>
-                            <li><a href="<?= site_url(); ?>"><i class="fa fa-dashboard"></i></a></li>
-                            <?php if ($Admin) { ?>
-                            <li><a href="<?= site_url('settings'); ?>"><i class="fa fa-cogs"></i></a></li>
-                            <?php } ?>
-                            <?php if ($this->db->dbdriver != 'sqlite3') { ?>
-                            <li><a href="<?= site_url('pos/view_bill'); ?>" target="_blank"><i class="fa fa-desktop"></i></a></li>
-                            <?php } ?>
-                            <li class="hidden-xs hidden-sm"><a href="<?= site_url('pos/shortcuts'); ?>" data-toggle="ajax"><i class="fa fa-key"></i></a></li>
-                            <li><a href="<?= site_url('pos/register_details'); ?>" data-toggle="ajax"><?= lang('register_details'); ?></a></li>
-                            <?php if ($Admin) { ?>
-                            <li><a href="<?= site_url('pos/today_sale'); ?>" data-toggle="ajax"><?= lang('today_sale'); ?></a></li>
-                            <?php } ?>
-                            <li><a href="<?= site_url('pos/close_register'); ?>" data-toggle="ajax"><?= lang('close_register'); ?></a></li>
-                            <?php if ($suspended_sales) { ?>
-                            <li class="dropdown notifications-menu" id="suspended_sales">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="fa fa-bell-o"></i>
-                                    <span class="label label-warning"><?=sizeof($suspended_sales);?></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="header">
-                                        <input type="text" autocomplete="off" data-list=".list-suspended-sales" name="filter-suspended-sales" id="filter-suspended-sales" class="form-control input-sm kb-text clearfix" placeholder="<?= lang('filter_by_reference'); ?>">
-                                    </li>
-                                    <li>
-                                        <ul class="menu">
-                                            <li class="list-suspended-sales">
-                                                <?php
-                                                foreach ($suspended_sales as $ss) {
-                                                    echo '<a href="'.site_url('pos/?hold='.$ss->id).'" class="load_suspended">'.$this->tec->hrld($ss->date).' ('.$ss->customer_name.')<br><div class="bold">'.$ss->hold_ref.'</div></a>';
-                                                }
-                                                ?>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="footer"><a href="<?= site_url('sales/opened'); ?>"><?= lang('view_all'); ?></a></li>
-                                </ul>
+                    <?php } ?>
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="<?= base_url('uploads/avatars/thumbs/'.($this->session->userdata('avatar') ? $this->session->userdata('avatar') : $this->session->userdata('gender').'.png')) ?>" class="user-image" alt="Avatar" />
+                            <span><?= $this->session->userdata('first_name').' '.$this->session->userdata('last_name'); ?></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="user-header">
+                                <img src="<?= base_url('uploads/avatars/'.($this->session->userdata('avatar') ? $this->session->userdata('avatar') : $this->session->userdata('gender').'.png')) ?>" class="img-circle" alt="Avatar" />
+                                <p>
+                                    <?= $this->session->userdata('email'); ?>
+                                    <small><?= lang('member_since').' '.$this->session->userdata('created_on'); ?></small>
+                                </p>
                             </li>
-                            <?php } ?>
-                            <li class="dropdown user user-menu">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <img src="<?= base_url('uploads/avatars/thumbs/'.($this->session->userdata('avatar') ? $this->session->userdata('avatar') : $this->session->userdata('gender').'.png')) ?>" class="user-image" alt="Avatar" />
-                                    <span><?= $this->session->userdata('first_name').' '.$this->session->userdata('last_name'); ?></span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li class="user-header">
-                                        <img src="<?= base_url('uploads/avatars/'.($this->session->userdata('avatar') ? $this->session->userdata('avatar') : $this->session->userdata('gender').'.png')) ?>" class="img-circle" alt="Avatar" />
-                                        <p>
-                                            <?= $this->session->userdata('email'); ?>
-                                            <small><?= lang('member_since').' '.$this->session->userdata('created_on'); ?></small>
-                                        </p>
-                                    </li>
-                                    <li class="user-footer">
-                                        <div class="pull-left">
-                                            <a href="<?= site_url('users/profile/'.$this->session->userdata('user_id')); ?>" class="btn btn-default btn-flat"><?= lang('profile'); ?></a>
-                                        </div>
-                                        <div class="pull-right">
-                                            <a href="<?= site_url('logout'); ?>" class="btn btn-default btn-flat<?= $this->session->userdata('register_id') ? ' sign_out' : ''; ?>"><?= lang('sign_out'); ?></a>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#" data-toggle="control-sidebar" class="sidebar-icon"><i class="fa fa-folder sidebar-icon"></i></a>
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="<?= site_url('users/profile/'.$this->session->userdata('user_id')); ?>" class="btn btn-default btn-flat"><?= lang('profile'); ?></a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="<?= site_url('logout'); ?>" class="btn btn-default btn-flat<?= $this->session->userdata('register_id') ? ' sign_out' : ''; ?>"><?= lang('sign_out'); ?></a>
+                                </div>
                             </li>
                         </ul>
-                    </div>
-                </nav>
-            </header>
+                    </li>
+                    <li>
+                        <a href="#" data-toggle="control-sidebar" class="sidebar-icon"><i class="fa fa-folder sidebar-icon"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-            <aside class="main-sidebar">
-                <section class="sidebar">
-                    <ul class="sidebar-menu">
-                        <li class="mm_welcome"><a href="<?= site_url(); ?>"><i class="fa fa-dashboard"></i> <span><?= lang('dashboard'); ?></span></a></li>
-                        <?php if ($Settings->multi_store && !$this->session->userdata('store_id')) { ?>
-                        <li class="mm_stores"><a href="<?= site_url('stores'); ?>"><i class="fa fa-building-o"></i> <span><?= lang('stores'); ?></span></a></li>
-                        <?php } ?>
-                        <li class="mm_pos"><a href="<?= site_url('pos'); ?>"><i class="fa fa-th"></i> <span><?= lang('pos'); ?></span></a></li>
+    <aside class="main-sidebar">
+        <section class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="mm_welcome"><a href="<?= site_url(); ?>"><i class="fa fa-dashboard"></i> <span><?= lang('dashboard'); ?></span></a></li>
+                <?php if ($Settings->multi_store && !$this->session->userdata('store_id')) { ?>
+                    <li class="mm_stores"><a href="<?= site_url('stores'); ?>"><i class="fa fa-building-o"></i> <span><?= lang('stores'); ?></span></a></li>
+                <?php } ?>
+                <li class="mm_pos"><a href="<?= site_url('pos'); ?>"><i class="fa fa-th"></i> <span><?= lang('pos'); ?></span></a></li>
 
-                        <?php if ($Admin) { ?>
-                        <li class="treeview mm_products">
-                            <a href="#">
-                                <i class="fa fa-barcode"></i>
-                                <span><?= lang('products'); ?></span>
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li id="products_index"><a href="<?= site_url('products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_products'); ?></a></li>
-                                <li id="products_add"><a href="<?= site_url('products/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_product'); ?></a></li>
-                                <li id="products_import"><a href="<?= site_url('products/import'); ?>"><i class="fa fa-circle-o"></i> <?= lang('import_products'); ?></a></li>
-                                <li class="divider"></li>
-                                <li id="products_print_barcodes">
-                                    <a onclick="window.open('<?= site_url('products/print_barcodes'); ?>', 'pos_popup', 'width=900,height=600,menubar=yes,scrollbars=yes,status=no,resizable=yes,screenx=0,screeny=0'); return false;" href="#"><i class="fa fa-circle-o"></i> <?= lang('print_barcodes'); ?></a>
-                                </li>
-                                <li id="products_print_labels">
-                                    <a onclick="window.open('<?= site_url('products/print_labels'); ?>', 'pos_popup', 'width=900,height=600,menubar=yes,scrollbars=yes,status=no,resizable=yes,screenx=0,screeny=0'); return false;" href="#"><i class="fa fa-circle-o"></i> <?= lang('print_labels'); ?></a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="treeview mm_categories">
-                            <a href="#">
-                                <i class="fa fa-folder"></i>
-                                <span><?= lang('categories'); ?></span>
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li id="categories_index"><a href="<?= site_url('categories'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_categories'); ?></a></li>
-                                <li id="categories_add"><a href="<?= site_url('categories/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_category'); ?></a></li>
-                                <li id="categories_import"><a href="<?= site_url('categories/import'); ?>"><i class="fa fa-circle-o"></i> <?= lang('import_categories'); ?></a></li>
-                            </ul>
-                        </li>
-                        <?php if ($this->session->userdata('store_id')) { ?>
+                <?php if ($Admin) { ?>
+                    <li class="treeview mm_products">
+                        <a href="#">
+                            <i class="fa fa-barcode"></i>
+                            <span><?= lang('products'); ?></span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="products_index"><a href="<?= site_url('products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_products'); ?></a></li>
+                            <li id="products_add"><a href="<?= site_url('products/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_product'); ?></a></li>
+                            <li id="products_import"><a href="<?= site_url('products/import'); ?>"><i class="fa fa-circle-o"></i> <?= lang('import_products'); ?></a></li>
+                            <li class="divider"></li>
+                            <li id="products_print_barcodes">
+                                <a onclick="window.open('<?= site_url('products/print_barcodes'); ?>', 'pos_popup', 'width=900,height=600,menubar=yes,scrollbars=yes,status=no,resizable=yes,screenx=0,screeny=0'); return false;" href="#"><i class="fa fa-circle-o"></i> <?= lang('print_barcodes'); ?></a>
+                            </li>
+                            <li id="products_print_labels">
+                                <a onclick="window.open('<?= site_url('products/print_labels'); ?>', 'pos_popup', 'width=900,height=600,menubar=yes,scrollbars=yes,status=no,resizable=yes,screenx=0,screeny=0'); return false;" href="#"><i class="fa fa-circle-o"></i> <?= lang('print_labels'); ?></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="treeview mm_categories">
+                        <a href="#">
+                            <i class="fa fa-folder"></i>
+                            <span><?= lang('categories'); ?></span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="categories_index"><a href="<?= site_url('categories'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_categories'); ?></a></li>
+                            <li id="categories_add"><a href="<?= site_url('categories/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_category'); ?></a></li>
+                            <li id="categories_import"><a href="<?= site_url('categories/import'); ?>"><i class="fa fa-circle-o"></i> <?= lang('import_categories'); ?></a></li>
+                        </ul>
+                    </li>
+                    <?php if ($this->session->userdata('store_id')) { ?>
                         <li class="treeview mm_sales">
                             <a href="#">
                                 <i class="fa fa-shopping-cart"></i>
@@ -160,7 +160,7 @@
                             </a>
                             <ul class="treeview-menu">
                                 <li id="sales_index"><a href="<?= site_url('sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_sales'); ?></a></li>
-                                <li id="sales_opened"><a href="<?= site_url('sales/opened'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_opened_bills'); ?></a></li>
+                                <li id="sales_opened"><a href="<?= site_url('sales/retur'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_retur'); ?></a></li>
                             </ul>
                         </li>
                         <li class="treeview mm_purchases">
@@ -177,83 +177,83 @@
                                 <li id="purchases_add_expense"><a href="<?= site_url('purchases/add_expense'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_expense'); ?></a></li>
                             </ul>
                         </li>
-                        <?php } ?>
-                        <li class="treeview mm_gift_cards">
-                            <a href="#">
-                                <i class="fa fa-credit-card"></i>
-                                <span><?= lang('gift_cards'); ?></span>
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li id="gift_cards_index"><a href="<?= site_url('gift_cards'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_gift_cards'); ?></a></li>
-                                <li id="gift_cards_add"><a href="<?= site_url('gift_cards/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_gift_card'); ?></a></li>
-                            </ul>
-                        </li>
+                    <?php } ?>
+                    <li class="treeview mm_gift_cards">
+                        <a href="#">
+                            <i class="fa fa-credit-card"></i>
+                            <span><?= lang('gift_cards'); ?></span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="gift_cards_index"><a href="<?= site_url('gift_cards'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_gift_cards'); ?></a></li>
+                            <li id="gift_cards_add"><a href="<?= site_url('gift_cards/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_gift_card'); ?></a></li>
+                        </ul>
+                    </li>
 
-                        <li class="treeview mm_auth mm_customers mm_suppliers">
-                            <a href="#">
-                                <i class="fa fa-users"></i>
-                                <span><?= lang('people'); ?></span>
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li id="auth_users"><a href="<?= site_url('users'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_users'); ?></a></li>
-                                <li id="auth_add"><a href="<?= site_url('users/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_user'); ?></a></li>
-                                <li class="divider"></li>
-                                <li id="customers_index"><a href="<?= site_url('customers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_customers'); ?></a></li>
-                                <li id="customers_add"><a href="<?= site_url('customers/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_customer'); ?></a></li>
-                                <li class="divider"></li>
-                                <li id="suppliers_index"><a href="<?= site_url('suppliers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_suppliers'); ?></a></li>
-                                <li id="suppliers_add"><a href="<?= site_url('suppliers/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_supplier'); ?></a></li>
-                            </ul>
-                        </li>
+                    <li class="treeview mm_auth mm_customers mm_suppliers">
+                        <a href="#">
+                            <i class="fa fa-users"></i>
+                            <span><?= lang('people'); ?></span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="auth_users"><a href="<?= site_url('users'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_users'); ?></a></li>
+                            <li id="auth_add"><a href="<?= site_url('users/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_user'); ?></a></li>
+                            <li class="divider"></li>
+                            <li id="customers_index"><a href="<?= site_url('customers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_customers'); ?></a></li>
+                            <li id="customers_add"><a href="<?= site_url('customers/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_customer'); ?></a></li>
+                            <li class="divider"></li>
+                            <li id="suppliers_index"><a href="<?= site_url('suppliers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_suppliers'); ?></a></li>
+                            <li id="suppliers_add"><a href="<?= site_url('suppliers/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_supplier'); ?></a></li>
+                        </ul>
+                    </li>
 
-                        <li class="treeview mm_settings">
-                            <a href="#">
-                                <i class="fa fa-cogs"></i>
-                                <span><?= lang('settings'); ?></span>
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li id="settings_index"><a href="<?= site_url('settings'); ?>"><i class="fa fa-circle-o"></i> <?= lang('settings'); ?></a></li>
-                                <li class="divider"></li>
-                                <?php if ($Settings->multi_store) { ?>
+                    <li class="treeview mm_settings">
+                        <a href="#">
+                            <i class="fa fa-cogs"></i>
+                            <span><?= lang('settings'); ?></span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="settings_index"><a href="<?= site_url('settings'); ?>"><i class="fa fa-circle-o"></i> <?= lang('settings'); ?></a></li>
+                            <li class="divider"></li>
+                            <?php if ($Settings->multi_store) { ?>
                                 <li id="settings_stores"><a href="<?= site_url('settings/stores'); ?>"><i class="fa fa-circle-o"></i> <?= lang('stores'); ?></a></li>
                                 <li id="settings_add_store"><a href="<?= site_url('settings/add_store'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_store'); ?></a></li>
                                 <li class="divider"></li>
-                                <?php } ?>
-                                <li id="settings_printers"><a href="<?= site_url('settings/printers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('printers'); ?></a></li>
-                                <li id="settings_add_printer"><a href="<?= site_url('settings/add_printer'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_printer'); ?></a></li>
-                                <li class="divider"></li>
-                                <?php if ($this->db->dbdriver != 'sqlite3') { ?>
+                            <?php } ?>
+                            <li id="settings_printers"><a href="<?= site_url('settings/printers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('printers'); ?></a></li>
+                            <li id="settings_add_printer"><a href="<?= site_url('settings/add_printer'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_printer'); ?></a></li>
+                            <li class="divider"></li>
+                            <?php if ($this->db->dbdriver != 'sqlite3') { ?>
                                 <li id="settings_backups"><a href="<?= site_url('settings/backups'); ?>"><i class="fa fa-circle-o"></i> <?= lang('backups'); ?></a></li>
-                                <?php } ?>
-                                <!-- <li id="settings_updates"><a href="<?= site_url('settings/updates'); ?>"><i class="fa fa-circle-o"></i> <?= lang('updates'); ?></a></li> -->
-                            </ul>
-                        </li>
-                        <li class="treeview mm_reports">
-                            <a href="#">
-                                <i class="fa fa-bar-chart-o"></i>
-                                <span><?= lang('reports'); ?></span>
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li id="reports_daily_sales"><a href="<?= site_url('reports/daily_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('daily_sales'); ?></a></li>
-                                <li id="reports_monthly_sales"><a href="<?= site_url('reports/monthly_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('monthly_sales'); ?></a></li>
-                                <li id="reports_index"><a href="<?= site_url('reports'); ?>"><i class="fa fa-circle-o"></i> <?= lang('sales_report'); ?></a></li>
-                                <li class="divider"></li>
-                                <li id="reports_payments"><a href="<?= site_url('reports/payments'); ?>"><i class="fa fa-circle-o"></i> <?= lang('payments_report'); ?></a></li>
-                                <li class="divider"></li>
-                                <li id="reports_registers"><a href="<?= site_url('reports/registers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('registers_report'); ?></a></li>
-                                <li class="divider"></li>
-                                <li id="reports_top_products"><a href="<?= site_url('reports/top_products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('top_products'); ?></a></li>
-                                <li id="reports_products"><a href="<?= site_url('reports/products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('products_report'); ?></a></li>
-                            </ul>
-                        </li>
-                        <?php } else { ?>
-                        <li class="mm_products"><a href="<?= site_url('products'); ?>"><i class="fa fa-barcode"></i> <span><?= lang('products'); ?></span></a></li>
-                        <li class="mm_categories"><a href="<?= site_url('categories'); ?>"><i class="fa fa-folder-open"></i> <span><?= lang('categories'); ?></span></a></li>
-                        <?php if ($this->session->userdata('store_id')) { ?>
+                            <?php } ?>
+                            <!-- <li id="settings_updates"><a href="<?= site_url('settings/updates'); ?>"><i class="fa fa-circle-o"></i> <?= lang('updates'); ?></a></li> -->
+                        </ul>
+                    </li>
+                    <li class="treeview mm_reports">
+                        <a href="#">
+                            <i class="fa fa-bar-chart-o"></i>
+                            <span><?= lang('reports'); ?></span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="reports_daily_sales"><a href="<?= site_url('reports/daily_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('daily_sales'); ?></a></li>
+                            <li id="reports_monthly_sales"><a href="<?= site_url('reports/monthly_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('monthly_sales'); ?></a></li>
+                            <li id="reports_index"><a href="<?= site_url('reports'); ?>"><i class="fa fa-circle-o"></i> <?= lang('sales_report'); ?></a></li>
+                            <li class="divider"></li>
+                            <li id="reports_payments"><a href="<?= site_url('reports/payments'); ?>"><i class="fa fa-circle-o"></i> <?= lang('payments_report'); ?></a></li>
+                            <li class="divider"></li>
+                            <li id="reports_registers"><a href="<?= site_url('reports/registers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('registers_report'); ?></a></li>
+                            <li class="divider"></li>
+                            <li id="reports_top_products"><a href="<?= site_url('reports/top_products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('top_products'); ?></a></li>
+                            <li id="reports_products"><a href="<?= site_url('reports/products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('products_report'); ?></a></li>
+                        </ul>
+                    </li>
+                <?php } else { ?>
+                    <li class="mm_products"><a href="<?= site_url('products'); ?>"><i class="fa fa-barcode"></i> <span><?= lang('products'); ?></span></a></li>
+                    <li class="mm_categories"><a href="<?= site_url('categories'); ?>"><i class="fa fa-folder-open"></i> <span><?= lang('categories'); ?></span></a></li>
+                    <?php if ($this->session->userdata('store_id')) { ?>
                         <li class="treeview mm_sales">
                             <a href="#">
                                 <i class="fa fa-shopping-cart"></i>
@@ -276,60 +276,60 @@
                                 <li id="purchases_add_expense"><a href="<?= site_url('purchases/add_expense'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_expense'); ?></a></li>
                             </ul>
                         </li>
-                        <?php } ?>
-                        <li class="treeview mm_gift_cards">
-                            <a href="#">
-                                <i class="fa fa-credit-card"></i>
-                                <span><?= lang('gift_cards'); ?></span>
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li id="gift_cards_index"><a href="<?= site_url('gift_cards'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_gift_cards'); ?></a></li>
-                                <li id="gift_cards_add"><a href="<?= site_url('gift_cards/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_gift_card'); ?></a></li>
-                            </ul>
-                        </li>
-                        <li class="treeview mm_customers">
-                            <a href="#">
-                                <i class="fa fa-users"></i>
-                                <span><?= lang('customers'); ?></span>
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li id="customers_index"><a href="<?= site_url('customers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_customers'); ?></a></li>
-                                <li id="customers_add"><a href="<?= site_url('customers/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_customer'); ?></a></li>
-                            </ul>
-                        </li>
-                        <?php } ?>
-                    </ul>
-                </section>
-            </aside>
-
-            <div class="content-wrapper">
-
-                <div class="col-lg-12 alerts">
-                <?php if ($error)  { ?>
-                    <div class="alert alert-danger alert-dismissable">
-                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                        <h4><i class="icon fa fa-ban"></i> <?= lang('error'); ?></h4>
-                        <?= $error; ?>
-                    </div>
-                    <?php } if ($message) { ?>
-                    <div class="alert alert-success alert-dismissable">
-                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
-                        <h4><i class="icon fa fa-check"></i> <?= lang('Success'); ?></h4>
-                        <?= $message; ?>
-                    </div>
                     <?php } ?>
-                </div>
+                    <li class="treeview mm_gift_cards">
+                        <a href="#">
+                            <i class="fa fa-credit-card"></i>
+                            <span><?= lang('gift_cards'); ?></span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="gift_cards_index"><a href="<?= site_url('gift_cards'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_gift_cards'); ?></a></li>
+                            <li id="gift_cards_add"><a href="<?= site_url('gift_cards/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_gift_card'); ?></a></li>
+                        </ul>
+                    </li>
+                    <li class="treeview mm_customers">
+                        <a href="#">
+                            <i class="fa fa-users"></i>
+                            <span><?= lang('customers'); ?></span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li id="customers_index"><a href="<?= site_url('customers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_customers'); ?></a></li>
+                            <li id="customers_add"><a href="<?= site_url('customers/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_customer'); ?></a></li>
+                        </ul>
+                    </li>
+                <?php } ?>
+            </ul>
+        </section>
+    </aside>
 
-                <table style="width:100%;" class="layout-table">
-                    <tr>
-                        <td style="width: 630px;">
+    <div class="content-wrapper">
+
+        <div class="col-lg-12 alerts">
+            <?php if ($error)  { ?>
+                <div class="alert alert-danger alert-dismissable">
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                    <h4><i class="icon fa fa-ban"></i> <?= lang('error'); ?></h4>
+                    <?= $error; ?>
+                </div>
+            <?php } if ($message) { ?>
+                <div class="alert alert-success alert-dismissable">
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                    <h4><i class="icon fa fa-check"></i> <?= lang('Success'); ?></h4>
+                    <?= $message; ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <table style="width:100%;" class="layout-table">
+            <tr>
+                <td style="width: 630px;">
                     <div id="pos">
                         <?= form_open('pos', 'id="pos-sale-form"'); ?>
                         <div class="well well-sm" id="leftdiv">
                             <div id="lefttop" style="margin-bottom:5px;">
-                               
+
                                 <!-- autocomplete customer-->
                                 <div class="form-group" style="margin-bottom:5px;">
                                     <div class="input-group">
@@ -355,7 +355,7 @@
                                 </div>
                                 <div class="form-group">
 
-                                    <?= form_input('date', (isset($_POST['date']) ? $_POST['date'] : ""), 'class="form-control datetimepicker" id="datesales"'); ?>
+                                    <?= form_input('date', $dates, 'class="form-control datetimepicker" id="datesales"'); ?>
                                 </div>
 
                                 <!-- dropdonn mfa-->
@@ -473,7 +473,7 @@
                             <div class="clearfix"></div>
                             <span id="hidesuspend"></span>
                             <input type="hidden" name="spos_note" value="" id="spos_note">
-                             <!-- table add payment pembayaran -->
+                            <!-- table add payment pembayaran -->
                             <div id="payment-con">
                                 <input type="hidden" name="amount" id="amount_val" value="<?= $eid ? $sale->paid : ''; ?>"/>
                                 <input type="hidden" name="balance_amount" id="balance_val" value=""/>
@@ -488,13 +488,13 @@
                                 <input type="hidden" name="cc_cvv2" id="cc_cvv2_val" value=""/>
                                 <input type="hidden" name="balance" id="balance_val" value=""/>
                                 <input type="hidden" name="payment_note" id="payment_note_val" value=""/>
-								
-								<input type="hidden" name="pos_paying_by" id="pos_paying_by" value="" />
-								<input type="hidden" name="pos_retur" id="pos_retur" value="" />
+
+                                <input type="hidden" name="pos_paying_by" id="pos_paying_by" value="" />
+                                <input type="hidden" name="pos_retur" id="pos_retur" value="" />
                             </div>
                             <input type="hidden" name="customer" id="customer" value="<?=$Settings->default_customer?>" />
                             <input type="hidden" name="order_tax" id="tax_val" value="" />
-							
+
                             <input type="hidden" name="order_discount" id="discount_val" value="" />
                             <input type="hidden" name="count" id="total_item" value="" />
                             <input type="hidden" name="did" id="is_delete" value="<?=$sid;?>" />
@@ -575,38 +575,38 @@
                         </div>
                     </div>
                 </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+            </tr>
+        </table>
+    </div>
+</div>
 
-        <aside class="control-sidebar control-sidebar-dark" id="categories-list">
-            <div class="tab-content sb">
-                <div class="tab-pane active sb" id="control-sidebar-home-tab">
-                    <div id="filter-categories-con">
-                        <input type="text" autocomplete="off" data-list=".control-sidebar-menu" name="filter-categories" id="filter-categories" class="form-control sb col-xs-12 kb-text" placeholder="<?= lang('filter_categories'); ?>" style="margin-bottom: 20px;">
-                    </div>
-                    <div class="clearfix sb"></div>
-                    <div id="category-sidebar-menu">
-                        <ul class="control-sidebar-menu">
-                            <?php
-                            foreach($categories as $category) {
-                                echo '<li><a href="#" class="category'.($category->id == $Settings->default_category ? ' active' : '').'" id="'.$category->id.'">';
-                                if ($category->image) {
-                                    echo '<div class="menu-icon"><img src="'.base_url('uploads/thumbs/'.$category->image).'" alt="" class="img-thumbnail img-responsive"></div>';
-                                } else {
-                                    echo '<i class="menu-icon fa fa-folder-open bg-red"></i>';
-                                }
-                                echo '<div class="menu-info"><h4 class="control-sidebar-subheading">'.$category->code.'</h4><p>'.$category->name.'</p></div>
-                            </a></li>';
+<aside class="control-sidebar control-sidebar-dark" id="categories-list">
+    <div class="tab-content sb">
+        <div class="tab-pane active sb" id="control-sidebar-home-tab">
+            <div id="filter-categories-con">
+                <input type="text" autocomplete="off" data-list=".control-sidebar-menu" name="filter-categories" id="filter-categories" class="form-control sb col-xs-12 kb-text" placeholder="<?= lang('filter_categories'); ?>" style="margin-bottom: 20px;">
+            </div>
+            <div class="clearfix sb"></div>
+            <div id="category-sidebar-menu">
+                <ul class="control-sidebar-menu">
+                    <?php
+                    foreach($categories as $category) {
+                        echo '<li><a href="#" class="category'.($category->id == $Settings->default_category ? ' active' : '').'" id="'.$category->id.'">';
+                        if ($category->image) {
+                            echo '<div class="menu-icon"><img src="'.base_url('uploads/thumbs/'.$category->image).'" alt="" class="img-thumbnail img-responsive"></div>';
+                        } else {
+                            echo '<i class="menu-icon fa fa-folder-open bg-red"></i>';
                         }
-                        ?>
-                    </ul>
-                </div>
+                        echo '<div class="menu-info"><h4 class="control-sidebar-subheading">'.$category->code.'</h4><p>'.$category->name.'</p></div>
+                            </a></li>';
+                    }
+                    ?>
+                </ul>
             </div>
         </div>
-    </aside>
-    <div class="control-sidebar-bg sb"></div>
+    </div>
+</aside>
+<div class="control-sidebar-bg sb"></div>
 </div>
 </div>
 <div id="order_tbl" style="display:none;"><span id="order_span"></span>
@@ -823,7 +823,7 @@
 <div class="modal" data-easein="flipYIn" id="opModal" tabindex="-1" role="dialog" aria-labelledby="opModalLabel" aria-hidden="true"></div>
 
 <!-- modal payment -->
-    <div class="modal" data-easein="flipYIn" id="payModal" tabindex="-1" role="dialog" aria-labelledby="payModalLabel" aria-hidden="true">
+<div class="modal" data-easein="flipYIn" id="payModal" tabindex="-1" role="dialog" aria-labelledby="payModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-success">
         <div class="modal-content">
             <div class="modal-header">
@@ -875,15 +875,15 @@
                             <div class="col-xs-5">
                                 <div class="form-group">
                                     <?= lang("paying_by", "paid_by"); ?>
-                                    
+
                                     <?php
                                     $paid[""] = "cash";
                                     foreach($paidBys as $paidBy) {
                                         $paid[$paidBy->paid_by_id] = $paidBy->paid_by;
                                     }
                                     ?>
-                                    <?= form_dropdownplaceholder('paid_by_id', $paid, set_value('paid_by'), 'class="form-control select2 tip" id="paid_by"  style="width:100%;"'); ?>
-                                
+                                    <?= form_dropdownplaceholder('paid_by_id', $paid, set_value('paid_by'), 'class="form-control select2  tip" id="paid_by"  style="width:100%;"'); ?>
+
 
                                 </div>
                             </div>
@@ -901,23 +901,23 @@
                             </div>
                             </div>
                             </div> -->
-                            <div class="pcc_" style="display:visible;">
+                            <div class="pcc_" style="display:none;">
 
                                 <div class="col-xs-5">
-								
 
-                                <div class="form-group ">
-                                    <?php
-                                    $bankname[""] = "Bank";
-                                    foreach($banks as $bank) {
-                                        $bankname[$bank->bank_id] = $bank->bank;
-                                    }
-                                    ?>
-                                    <?= form_dropdownplaceholder('bank_id', $bankname, set_value('bank'), 'class="form-control select2 tip" id="bank_id"  style="width:100%;"'); ?>
-                                </div>
 
-                                <!-- end dropdown bank
-								
+                                    <div class="form-group ">
+                                        <?php
+                                        $bankname[""] = "Bank";
+                                        foreach($banks as $bank) {
+                                            $bankname[$bank->bank_id] = $bank->bank;
+                                        }
+                                        ?>
+                                        <?= form_dropdownplaceholder('bank_id', $bankname, set_value('bank'), 'class="form-control select2 tip" id="bank_id"  style="width:100%;"'); ?>
+                                    </div>
+
+                                    <!-- end dropdown bank
+
                                     <div class="form-group">
                                         <select style="width:100%;  id="pcc_type"
                                         class="form-control pcc_type select2"
@@ -931,16 +931,16 @@
                                     </div>-->
                                 </div>
                                 <div class="col-xs-5">
-								    <div class="form-group ">
-                                    <?php
-                                    $edcname[""] = "Merchant";
-                                    foreach($edcs as $edc) {
-                                        $edcname[$edc->edc_id] = $edc->edc;
-                                    }
-                                    ?>
-                                    <?= form_dropdownplaceholder('edc_id', $edcname, set_value('edc'), 'class="form-control select2 tip" id="edc_id"  style="width:100%;"'); ?>
-                                </div>
-								<!--
+                                    <div class="form-group ">
+                                        <?php
+                                        $edcname[""] = "Merchant";
+                                        foreach($edcs as $edc) {
+                                            $edcname[$edc->edc_id] = $edc->edc;
+                                        }
+                                        ?>
+                                        <?= form_dropdownplaceholder('edc_id', $edcname, set_value('edc'), 'class="form-control select2 tip" id="edc_id"  style="width:100%;"'); ?>
+                                    </div>
+                                    <!--
                                     <div class="form-group">
                                         <select style="width:100%; id="pcc_type"
                                         class="form-control pcc_type select2"
@@ -956,11 +956,17 @@
                                     </div>-->
                                 </div>
                             </div>
-                            <div class="prefnumber_"  style="display:visible;">
+                            <div class="prefnumber_"  style="display:none;">
                                 <div class="form-group   col-xs-10">
                                     <input type="text" id="reffnumber_input" class="form-control reffnumber_input"
                                            placeholder="Input Reff Number"/>
-									<input type="text" name="searchreturno" id="searchreturno" class="form-control ui-autocomplete-input" placeholder="Search Retur No..." autocomplete="on">
+
+                                </div>
+                            </div>
+                            <div class="prefretur_"  style="display:none">
+                                <div class="form-group   col-xs-10">
+
+                                    <input type="text" name="searchreturno" id="searchreturno" class="form-control ui-autocomplete-input" placeholder="Search Retur No..." autocomplete="on">
                                 </div>
                             </div>
                         </div>
@@ -1159,7 +1165,7 @@
                                             <th style="width: 20%;text-align:center;"><?=lang('product')?></th>
                                             <th style="width: 10%;text-align:center;"><?=lang('price')?></th>
                                             <th style="width: 10%;text-align:left;"><?=lang('qty')?></th>
-											<th style="width: 10%;text-align:left;">Retur</th>
+                                            <th style="width: 10%;text-align:left;">Retur</th>
                                             <th style="width: 10%;text-align:left;"><?=lang('subtotal')?></th>
                                             <th style="width: 10%;text-align:left;">Disc %</th>
                                             <th style="width: 15%;text-align:center;">Total</th>
@@ -1174,7 +1180,7 @@
                                         <th style="width: 20%;text-align:left;"><?=lang('product')?></th>
                                         <th style="width: 15%;text-align:left;"><?=lang('price')?></th>
                                         <th style="width: 7%;text-align:left;"><?=lang('qty')?></th>
-										<th style="width: 7%;text-align:left;"><?=lang('qty')?></th>
+                                        <th style="width: 7%;text-align:left;"><?=lang('qty')?></th>
                                         <th style="width: 19%;text-align:left;"><?=lang('subtotal')?></th>
                                         <th style="width: 7%;text-align:right;">Disc</th>
                                         <th style="width: 15%;text-align:left;">Total</th>
@@ -1217,9 +1223,9 @@
                             <input type="hidden" name="cc_cvv2" id="cc_cvv2_val" value=""/>
                             <input type="hidden" name="balance" id="balance_val" value=""/>
                             <input type="hidden" name="payment_note" id="payment_note_val" value=""/>
-							
-							
-							
+
+
+
                         </div>
                         <input type="hidden" name="customer" id="customer" value="<?=$Settings->default_customer?>" />
                         <input type="hidden" name="order_tax" id="tax_val" value="" />
@@ -1262,37 +1268,37 @@
     <?php
     if ($Settings->remote_printing == 2) {
 
-        ?>
-        var ob_store_name = "<?= printText($store->name, (!empty($printer) ? $printer->char_per_line : '')); ?>\r\n";
-        order_data.store_name = ob_store_name;
-        bill_data.store_name = ob_store_name;
+    ?>
+    var ob_store_name = "<?= printText($store->name, (!empty($printer) ? $printer->char_per_line : '')); ?>\r\n";
+    order_data.store_name = ob_store_name;
+    bill_data.store_name = ob_store_name;
 
-        ob_header = "";
-        ob_header += "<?= printText($store->name.' ('.$store->code.')', (!empty($printer) ? $printer->char_per_line : '')); ?>\r\n";
-        <?php
-        if ($store->address1) { ?>
-            ob_header += "<?= printText($store->address1, (!empty($printer) ? $printer->char_per_line : ''));?>\r\n";
-            <?php
-        }
-        if ($store->address2) { ?>
-            ob_header += "<?= printText($store->address2, (!empty($printer) ? $printer->char_per_line : ''));?>\r\n";
-            <?php
-        }
-        if ($store->city) { ?>
-            ob_header += "<?= printText($store->city, (!empty($printer) ? $printer->char_per_line : ''));?>\r\n";
-            <?php
-        } ?>
-        ob_header += "<?= printText(lang('tel').': '.$store->phone, (!empty($printer) ? $printer->char_per_line : ''));?>\r\n\r\n";
-        ob_header += "<?= printText(str_replace( array( "\n", "\r" ), array( "\\n", "\\r" ), $store->receipt_header), (!empty($printer) ? $printer->char_per_line : ''));?>\r\n\r\n";
+    ob_header = "";
+    ob_header += "<?= printText($store->name.' ('.$store->code.')', (!empty($printer) ? $printer->char_per_line : '')); ?>\r\n";
+    <?php
+    if ($store->address1) { ?>
+    ob_header += "<?= printText($store->address1, (!empty($printer) ? $printer->char_per_line : ''));?>\r\n";
+    <?php
+    }
+    if ($store->address2) { ?>
+    ob_header += "<?= printText($store->address2, (!empty($printer) ? $printer->char_per_line : ''));?>\r\n";
+    <?php
+    }
+    if ($store->city) { ?>
+    ob_header += "<?= printText($store->city, (!empty($printer) ? $printer->char_per_line : ''));?>\r\n";
+    <?php
+    } ?>
+    ob_header += "<?= printText(lang('tel').': '.$store->phone, (!empty($printer) ? $printer->char_per_line : ''));?>\r\n\r\n";
+    ob_header += "<?= printText(str_replace( array( "\n", "\r" ), array( "\\n", "\\r" ), $store->receipt_header), (!empty($printer) ? $printer->char_per_line : ''));?>\r\n\r\n";
 
-        order_data.header = ob_header + "<?= printText(lang('order'), (!empty($printer) ? $printer->char_per_line : '')); ?>\r\n\r\n";
-        bill_data.header = ob_header + "<?= printText(lang('bill'), (!empty($printer) ? $printer->char_per_line : '')); ?>\r\n\r\n";
-        order_data.totals = '';
-        order_data.payments = '';
-        bill_data.payments = '';
-        order_data.footer = '';
-        bill_data.footer = "<?= lang('merchant_copy'); ?> \n";
-        <?php
+    order_data.header = ob_header + "<?= printText(lang('order'), (!empty($printer) ? $printer->char_per_line : '')); ?>\r\n\r\n";
+    bill_data.header = ob_header + "<?= printText(lang('bill'), (!empty($printer) ? $printer->char_per_line : '')); ?>\r\n\r\n";
+    order_data.totals = '';
+    order_data.payments = '';
+    bill_data.payments = '';
+    order_data.footer = '';
+    bill_data.footer = "<?= lang('merchant_copy'); ?> \n";
+    <?php
     }
     ?>
     var lang = new Array();
@@ -1333,152 +1339,158 @@
 
     $(document).ready(function() {
         <?php if ($this->session->userdata('rmspos')) { ?>
+        if (get('spositems')) { remove('spositems'); }
+        if (get('spos_discount')) { remove('spos_discount'); }
+        if (get('spos_tax')) { remove('spos_tax'); }
+        if (get('spos_note')) { remove('spos_note'); }
+        if (get('spos_customer')) { remove('spos_customer'); }
+        if (get('spositemsretur')) { remove('spositemsretur'); }
+        if (get('customer_id')) { remove('customer_id'); }
+        if (get('customer_name')) { remove('customer_name'); }
+        if (get('amount')) { remove('amount'); }
+        <?php $this->tec->unset_data('rmspos'); } ?>
+
+        if (get('rmspos')) {
             if (get('spositems')) { remove('spositems'); }
             if (get('spos_discount')) { remove('spos_discount'); }
             if (get('spos_tax')) { remove('spos_tax'); }
             if (get('spos_note')) { remove('spos_note'); }
             if (get('spos_customer')) { remove('spos_customer'); }
+            if (get('spositemsretur')) { remove('spositemsretur'); }
+            if (get('customer_id')) { remove('customer_id'); }
+            if (get('customer_name')) { remove('customer_name'); }
             if (get('amount')) { remove('amount'); }
-            <?php $this->tec->unset_data('rmspos'); } ?>
+            remove('rmspos');
+        }
+        <?php if ($sid) { ?>
 
-            if (get('rmspos')) {
-                if (get('spositems')) { remove('spositems'); }
-                if (get('spos_discount')) { remove('spos_discount'); }
-                if (get('spos_tax')) { remove('spos_tax'); }
-                if (get('spos_note')) { remove('spos_note'); }
-                if (get('spos_customer')) { remove('spos_customer'); }
-                if (get('amount')) { remove('amount'); }
-                remove('rmspos');
+        store('spositems', JSON.stringify(<?=$items;?>));
+        store('spos_discount', '<?=$suspend_sale->order_discount_id;?>');
+        store('spos_tax', '<?=$suspend_sale->order_tax_id;?>');
+        store('spos_customer', '<?=$suspend_sale->customer_id;?>');
+        $('#spos_customer').select2().select2('val', '<?=$suspend_sale->customer_id;?>');
+        store('rmspos', '1');
+        $('#tax_val').val('<?=$suspend_sale->order_tax_id;?>');
+        $('#discount_val').val('<?=$suspend_sale->order_discount_id;?>');
+        <?php } elseif ($eid) { ?>
+        $('#date').inputmask("y-m-d h:s:s", { "placeholder": "YYYY/MM/DD HH:mm:ss" });
+        store('spositems', JSON.stringify(<?=$items;?>));
+        store('spos_discount', '<?=$sale->order_discount_id;?>');
+        store('spos_tax', '<?=$sale->order_tax_id;?>');
+        store('spos_customer', '<?=$sale->customer_id;?>');
+        store('sale_date', '<?=$sale->date;?>');
+        $('#spos_customer').select2().select2('val', '<?=$sale->customer_id;?>');
+        $('#date').val('<?=$sale->date;?>');
+        store('rmspos', '1');
+        $('#tax_val').val('<?=$sale->order_tax_id;?>');
+        $('#discount_val').val('<?=$sale->order_discount_id;?>');
+        <?php } else { ?>
+        if (! get('spos_discount')) {
+            store('spos_discount', '<?=$Settings->default_discount;?>');
+            $('#discount_val').val('<?=$Settings->default_discount;?>');
+        }
+        if (! get('spos_tax')) {
+            store('spos_tax', '<?=$Settings->default_tax_rate;?>');
+            $('#tax_val').val('<?=$Settings->default_tax_rate;?>');
+        }
+        <?php } ?>
+
+        if (ots = get('spos_tax')) {
+            $('#tax_val').val(ots);
+        }
+        if (ods = get('spos_discount')) {
+            $('#discount_val').val(ods);
+        }
+        bootbox.addLocale('bl',{OK:'<?= lang('ok'); ?>',CANCEL:'<?= lang('no'); ?>',CONFIRM:'<?= lang('yes'); ?>'});
+        bootbox.setDefaults({closeButton:false,locale:"bl"});
+        <?php if ($eid) { ?>
+        $('#suspend').attr('disabled', true);
+        $('#print_order').attr('disabled', true);
+        $('#print_bill').attr('disabled', true);
+        <?php } ?>
+    });
+</script>
+
+<script type="text/javascript">
+    var socket = null;
+    <?php
+    if ($Settings->remote_printing == 2) {
+    ?>
+    try {
+        socket = new WebSocket('ws://127.0.0.1:6441');
+        socket.onopen = function () {
+            console.log('Connected');
+            return;
+        };
+        socket.onclose = function () {
+            console.log('Connection closed');
+            return;
+        };
+    } catch (e) {
+        console.log(e);
+    }
+    <?php
+    }
+    ?>
+    function printBill(bill) {
+        if (Settings.remote_printing == 1) {
+            Popup($('#bill_tbl').html());
+        } else if (Settings.remote_printing == 2) {
+            if (socket.readyState == 1) {
+                var socket_data = {'printer': <?= $Settings->local_printers ? "''" : json_encode($printer); ?>, 'logo': '<?= !empty($store->logo) ? base_url('uploads/'.$store->logo) : ''; ?>', 'text': bill};
+                socket.send(JSON.stringify({
+                    type: 'print-receipt',
+                    data: socket_data
+                }));
+                return false;
+            } else {
+                bootbox.alert('<?= lang('pos_print_error'); ?>');
+                return false;
             }
-            <?php if ($sid) { ?>
+        }
+    }
+    var order_printers = <?= $Settings->local_printers ? "''" : json_encode($order_printers); ?>;
+    function printOrder(order) {
+        if (Settings.remote_printing == 1) {
+            Popup($('#order_tbl').html());
+        } else if (Settings.remote_printing == 2) {
+            if (socket.readyState == 1) {
+                if (order_printers == '') {
 
-                store('spositems', JSON.stringify(<?=$items;?>));
-                store('spos_discount', '<?=$suspend_sale->order_discount_id;?>');
-                store('spos_tax', '<?=$suspend_sale->order_tax_id;?>');
-                store('spos_customer', '<?=$suspend_sale->customer_id;?>');
-                $('#spos_customer').select2().select2('val', '<?=$suspend_sale->customer_id;?>');
-                store('rmspos', '1');
-                $('#tax_val').val('<?=$suspend_sale->order_tax_id;?>');
-                $('#discount_val').val('<?=$suspend_sale->order_discount_id;?>');
-                <?php } elseif ($eid) { ?>
-                    $('#date').inputmask("y-m-d h:s:s", { "placeholder": "YYYY/MM/DD HH:mm:ss" });
-                    store('spositems', JSON.stringify(<?=$items;?>));
-                    store('spos_discount', '<?=$sale->order_discount_id;?>');
-                    store('spos_tax', '<?=$sale->order_tax_id;?>');
-                    store('spos_customer', '<?=$sale->customer_id;?>');
-                    store('sale_date', '<?=$sale->date;?>');
-                    $('#spos_customer').select2().select2('val', '<?=$sale->customer_id;?>');
-                    $('#date').val('<?=$sale->date;?>');
-                    store('rmspos', '1');
-                    $('#tax_val').val('<?=$sale->order_tax_id;?>');
-                    $('#discount_val').val('<?=$sale->order_discount_id;?>');
-                    <?php } else { ?>
-                        if (! get('spos_discount')) {
-                            store('spos_discount', '<?=$Settings->default_discount;?>');
-                            $('#discount_val').val('<?=$Settings->default_discount;?>');
-                        }
-                        if (! get('spos_tax')) {
-                            store('spos_tax', '<?=$Settings->default_tax_rate;?>');
-                            $('#tax_val').val('<?=$Settings->default_tax_rate;?>');
-                        }
-                        <?php } ?>
+                    var socket_data = { 'printer': false, 'order': true,
+                        'logo': '<?= !empty($store->logo) ? base_url('uploads/'.$store->logo) : ''; ?>',
+                        'text': order };
+                    socket.send(JSON.stringify({type: 'print-receipt', data: socket_data}));
 
-                        if (ots = get('spos_tax')) {
-                            $('#tax_val').val(ots);
-                        }
-                        if (ods = get('spos_discount')) {
-                            $('#discount_val').val(ods);
-                        }
-                        bootbox.addLocale('bl',{OK:'<?= lang('ok'); ?>',CANCEL:'<?= lang('no'); ?>',CONFIRM:'<?= lang('yes'); ?>'});
-                        bootbox.setDefaults({closeButton:false,locale:"bl"});
-                        <?php if ($eid) { ?>
-                            $('#suspend').attr('disabled', true);
-                            $('#print_order').attr('disabled', true);
-                            $('#print_bill').attr('disabled', true);
-                            <?php } ?>
-                        });
-                    </script>
+                } else {
 
-                    <script type="text/javascript">
-                        var socket = null;
-                        <?php
-                        if ($Settings->remote_printing == 2) {
-                            ?>
-                            try {
-                                socket = new WebSocket('ws://127.0.0.1:6441');
-                                socket.onopen = function () {
-                                    console.log('Connected');
-                                    return;
-                                };
-                                socket.onclose = function () {
-                                    console.log('Connection closed');
-                                    return;
-                                };
-                            } catch (e) {
-                                console.log(e);
-                            }
-                            <?php
-                        }
-                        ?>
-                        function printBill(bill) {
-                            if (Settings.remote_printing == 1) {
-                                Popup($('#bill_tbl').html());
-                            } else if (Settings.remote_printing == 2) {
-                                if (socket.readyState == 1) {
-                                    var socket_data = {'printer': <?= $Settings->local_printers ? "''" : json_encode($printer); ?>, 'logo': '<?= !empty($store->logo) ? base_url('uploads/'.$store->logo) : ''; ?>', 'text': bill};
-                                    socket.send(JSON.stringify({
-                                        type: 'print-receipt',
-                                        data: socket_data
-                                    }));
-                                    return false;
-                                } else {
-                                    bootbox.alert('<?= lang('pos_print_error'); ?>');
-                                    return false;
-                                }
-                            }
-                        }
-                        var order_printers = <?= $Settings->local_printers ? "''" : json_encode($order_printers); ?>;
-                        function printOrder(order) {
-                            if (Settings.remote_printing == 1) {
-                                Popup($('#order_tbl').html());
-                            } else if (Settings.remote_printing == 2) {
-                                if (socket.readyState == 1) {
-                                    if (order_printers == '') {
+                    $.each(order_printers, function() {
+                        var socket_data = {'printer': this, 'logo': '<?= !empty($store->logo) ? base_url('uploads/'.$store->logo) : ''; ?>', 'text': order};
+                        socket.send(JSON.stringify({type: 'print-receipt', data: socket_data}));
+                    });
 
-                                        var socket_data = { 'printer': false, 'order': true,
-                                        'logo': '<?= !empty($store->logo) ? base_url('uploads/'.$store->logo) : ''; ?>',
-                                        'text': order };
-                                        socket.send(JSON.stringify({type: 'print-receipt', data: socket_data}));
+                }
+                return false;
+            } else {
+                bootbox.alert('<?= lang('pos_print_error'); ?>');
+                return false;
+            }
+        }
+    }
 
-                                    } else {
+    function Popup(data) {
+        var mywindow = window.open('', 'spos_print', 'height=500,width=300');
+        mywindow.document.write('<html><head><title>Print</title>');
+        mywindow.document.write('<link rel="stylesheet" href="<?= $assets ?>bootstrap/css/bootstrap.min.css" type="text/css" />');
+        mywindow.document.write('</head><body>');
+        mywindow.document.write(data);
+        mywindow.document.write('</body></html>');
+        mywindow.print();
+        mywindow.close();
+        return true;
+    }
+</script>
 
-                                        $.each(order_printers, function() {
-                                            var socket_data = {'printer': this, 'logo': '<?= !empty($store->logo) ? base_url('uploads/'.$store->logo) : ''; ?>', 'text': order};
-                                            socket.send(JSON.stringify({type: 'print-receipt', data: socket_data}));
-                                        });
-
-                                    }
-                                    return false;
-                                } else {
-                                    bootbox.alert('<?= lang('pos_print_error'); ?>');
-                                    return false;
-                                }
-                            }
-                        }
-
-                        function Popup(data) {
-                            var mywindow = window.open('', 'spos_print', 'height=500,width=300');
-                            mywindow.document.write('<html><head><title>Print</title>');
-                            mywindow.document.write('<link rel="stylesheet" href="<?= $assets ?>bootstrap/css/bootstrap.min.css" type="text/css" />');
-                            mywindow.document.write('</head><body>');
-                            mywindow.document.write(data);
-                            mywindow.document.write('</body></html>');
-                            mywindow.print();
-                            mywindow.close();
-                            return true;
-                        }
-                    </script>
-					
 <script type="text/javascript">
     $(function () {
         $('.datetimepicker').datetimepicker({
@@ -1487,21 +1499,21 @@
 
     });
 </script>
-					
-                    <?php
-                    if (isset($print) && !empty($print)) {
-                        /* include FCPATH.'themes'.DIRECTORY_SEPARATOR.$Settings->theme.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'pos'.DIRECTORY_SEPARATOR.'remote_printing.php'; */
-                        include 'remote_printing.php';
-                    }
-                    ?>
 
-                    <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/moment.min.js" type="text/javascript"></script>
+<?php
+if (isset($print) && !empty($print)) {
+    /* include FCPATH.'themes'.DIRECTORY_SEPARATOR.$Settings->theme.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'pos'.DIRECTORY_SEPARATOR.'remote_printing.php'; */
+    include 'remote_printing.php';
+}
+?>
+
+<script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/moment.min.js" type="text/javascript"></script>
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
-					<script src="<?= $assets ?>dist/js/libraries.min.js" type="text/javascript"></script>
-                    <script src="<?= $assets ?>dist/js/scripts.min.js" type="text/javascript"></script>
-                    <script src="<?= $assets ?>dist/js/pos.min.js" type="text/javascript"></script>
-                    <?php if($Settings->remote_printing != 1 && $Settings->print_img) { ?>
-                    <script src="<?= $assets ?>dist/js/htmlimg.js"></script>
-                    <?php } ?>
-                </body>
-                </html>
+<script src="<?= $assets ?>dist/js/libraries.min.js" type="text/javascript"></script>
+<script src="<?= $assets ?>dist/js/scripts.min.js" type="text/javascript"></script>
+<script src="<?= $assets ?>dist/js/pos.min.js" type="text/javascript"></script>
+<?php if($Settings->remote_printing != 1 && $Settings->print_img) { ?>
+    <script src="<?= $assets ?>dist/js/htmlimg.js"></script>
+<?php } ?>
+</body>
+</html>

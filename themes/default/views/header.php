@@ -167,7 +167,7 @@
                     </a>
                     <ul class="treeview-menu">
                         <li id="sales_index"><a href="<?= site_url('sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_sales'); ?></a></li>
-                        <li id="sales_opened"><a href="<?= site_url('sales/opened'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_opened_bills'); ?></a></li>
+                        <li id="sales_opened"><a href="<?= site_url('sales/retur'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_retur'); ?></a></li>
                     </ul>
                 </li>
                 <li class="treeview mm_purchases">

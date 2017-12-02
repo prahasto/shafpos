@@ -48,6 +48,7 @@ class Pos_model extends CI_Model
 
         $this->db->select('id,salesno,customer_name');
 		$this->db->where('status', 'paid');
+		$this->db->where('usr_tipetrans_id', 12);
         $this->db->like('salesno', $term);
         $this->db->or_like('customer_name', $term);
 		$this->db->limit($limit);
@@ -558,6 +559,7 @@ class Pos_model extends CI_Model
 
 	public function addretur($data,$products)
 	{
+        $data['usr_tipetrans_id']=18;
 		if($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
 			$n=0;
@@ -577,6 +579,7 @@ class Pos_model extends CI_Model
 	}
 	
     public function addSale($data, $items, $payment = array(), $did = NULL) {
+        $data['usr_tipetrans_id']=12;
 
         if($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();

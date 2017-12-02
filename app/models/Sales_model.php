@@ -109,7 +109,14 @@ class Sales_model extends CI_Model
     }
 
     public function updateStatus($id, $status) {
-        if ($this->db->update('sales', array('status' => $status), array('id' => $id))) {
+        if ($this->db->update('sales', array('status' => $status), array('salesno' => $id))) {
+            return true;
+        }
+        return false;
+    }
+	
+	public function updateStatusretur($id, $status) {
+        if ($this->db->update('sales', array('status' => $status), array('salesno' => $id))) {
             return true;
         }
         return false;

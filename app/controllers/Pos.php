@@ -11,8 +11,19 @@ class Pos extends MY_Controller {
         $this->load->helper('pos');
         $this->load->model('pos_model');
         $this->load->library('form_validation');
+		
+		
 
     }
+
+    function getPaidbyid() {
+        $saleid = $this->input->get('padibyid');
+        $obj = $this->site->getPaidHtml($saleid);
+
+        echo json_encode($obj);
+
+    }
+
 	
 	function addretur(){
 		$saleid = $this->input->get('salesid');
@@ -30,28 +41,30 @@ class Pos extends MY_Controller {
 		 $store_id=1;
 		 $total=123;
 		foreach ($myJSON as $k => $v) {
-				   $rprodukid = $myJSON->$k->item_id;
-				   $rprodukname = $myJSON->$k->row->name;
-				   $rquantity = $myJSON->$k->row->qty;
-		           $rprice =$myJSON->$k->row->price;
-				   $rtotal = $myJSON->$k->row->total;
-				   $rdiskon = $myJSON->$k->row->disc_persen;
-				   $rsubtotal = $myJSON->$k->row->subtotal;
-				   //$nbankid = $myJSON->$k->bankid;
-				   //$nreff = $myJSON->$k->reffnumber;
-				   $products[] = array(
-                        'product_id' => $rprodukid,
-                        'quantity' => $rquantity,
-                        'unit_price' => $rprice,
-						'net_unit_price'=> $rprice,
-                        'discount' => $rdiskon,
-                        'subtotal' => $rsubtotal,
-                        'product_name' => $rprodukname,
-                        'disc_persen' => $disc_persen,
-                        'total' => $rtotal,
-                        );
-				   $npaid=$npaid+$rtotal;
-                }
+            if ($myJSON->$k->row->qty > 0) {
+                $rprodukid = $myJSON->$k->item_id;
+                $rprodukname = $myJSON->$k->row->name;
+                $rquantity = $myJSON->$k->row->qty;
+                $rprice = $myJSON->$k->row->price;
+                $rtotal = $myJSON->$k->row->total;
+                $rdiskon = $myJSON->$k->row->disc_persen;
+                $rsubtotal = $myJSON->$k->row->subtotal;
+                //$nbankid = $myJSON->$k->bankid;
+                //$nreff = $myJSON->$k->reffnumber;
+                $products[] = array(
+                    'product_id' => $rprodukid,
+                    'quantity' => $rquantity,
+                    'unit_price' => $rprice,
+                    'net_unit_price' => $rprice,
+                    'discount' => $rdiskon,
+                    'subtotal' => $rsubtotal,
+                    'product_name' => $rprodukname,
+                    'disc_persen' => $rdiskon,
+                    'total' => $rtotal,
+                );
+                $npaid = $npaid + $rtotal;
+           }
+        }
 		$data = array(
                 'salesno' => $salesreturno, 
                 'date' => $date,
@@ -99,14 +112,14 @@ class Pos extends MY_Controller {
                 $row->name = $item->product_name;
                 $row->tax = 0;
             }
-            $row->subtotal=$item->subtotal;
+            $row->subtotal=0;//$item->subtotal;
             $row->disc_persen=$item->disc_persen;
-           $row->total=$item->total;
+           $row->total=0;//$item->total;
             $row->price = $item->net_unit_price+($item->item_discount/$item->quantity);
             $row->unit_price = $item->unit_price+($item->item_discount/$item->quantity)+($item->item_tax/$item->quantity);
             $row->real_unit_price = $item->real_unit_price;
             $row->discount = $item->discount;
-            $row->qty = $item->quantity;
+            $row->qty = 0;
             $row->qtysales = $item->quantity;
             $row->comment = $item->comment;
             $row->ordered = $item->quantity;
@@ -132,6 +145,7 @@ class Pos extends MY_Controller {
    }
 
     function index($sid = NULL, $eid = NULL) {
+		  
         if (!$this->Settings->multi_store) {
             $this->session->set_userdata('store_id', 1);
         }
@@ -139,7 +153,11 @@ class Pos extends MY_Controller {
             $this->session->set_flashdata('warning', lang("please_select_store"));
             redirect($this->Settings->multi_store ? 'stores' : 'welcome');
         }
-        if( $this->input->get('hold') ) { $sid = $this->input->get('hold'); }
+        if( $this->input->get('hold') ) 
+		    { 
+		       $sid = $this->input->get('hold');
+               //$this->session->set_flashdata('message','dw');		
+			}
         if( $this->input->get('edit') ) { $eid = $this->input->get('edit'); }
         if( $this->input->post('eid') ) { $eid = $this->input->post('eid'); }
         if( $this->input->post('did') ) { $did = $this->input->post('did'); } else { $did = NULL; }
@@ -162,7 +180,7 @@ class Pos extends MY_Controller {
         }
 
         $suspend = $this->input->post('suspend') ? TRUE : FALSE;
-
+        //$this->session->set_flashdata('message',   $suspend);
         $this->form_validation->set_rules('customer', lang("customer"), 'trim|required');
 
         if ($this->form_validation->run() == true) {
@@ -378,10 +396,11 @@ class Pos extends MY_Controller {
                 'total_quantity' => $this->input->post('total_quantity'),
                 'rounding' => $rounding,
                 'paid' => $paid,
-                'status' => $status,
+                'status' => 'paid',//$status,
                 'created_by' => $this->session->userdata('user_id'),
                 'note' => $note,
                 'hold_ref' => $this->input->post('hold_ref'),
+
                 );
 
             if (!$eid) {
@@ -455,7 +474,9 @@ class Pos extends MY_Controller {
         }
 
         if ( $this->form_validation->run() == true && !empty($products) )
+       // if ( !empty($products) )
         {
+
             if($suspend) {
                 unset($data['status'], $data['rounding']);
                 if($this->pos_model->suspendSale($data, $products, $did)) {
@@ -599,7 +620,7 @@ class Pos extends MY_Controller {
 			$this->data['edcs'] = $this->site->getEDC();
 			$this->data['paidBys'] = $this->site->getPaidBy();
             //$this->data['tanggal'] = $tglKode=date('dmY',strtotime($tanggal));
-
+            $this->data['dates'] = date('dmY');
             $this->data['message'] = $this->session->flashdata('message');
             $this->data['suspended_sales'] = $this->site->getUserSuspenedSales();
 

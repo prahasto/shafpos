@@ -24,7 +24,7 @@
 
         var table = $('#SLData').DataTable({
 
-            'ajax' : { url: '<?=site_url('sales/get_sales');?>', type: 'POST', "data": function ( d ) {
+            'ajax' : { url: '<?=site_url('sales/get_retur');?>', type: 'POST', "data": function ( d ) {
                 d.<?=$this->security->get_csrf_token_name();?> = "<?=$this->security->get_csrf_hash()?>";
             }},
             "buttons": [
@@ -161,7 +161,7 @@
                         <span aria-hidden="true"><i class="fa fa-times"></i></span></button>
                     <h4 class="modal-title" id="stModalLabel"><?= lang('update_status'); ?> <span id="sales-no"></span></h4>
                 </div>
-                <?= form_open('sales/status'); ?>
+                <?= form_open('sales/statusretur'); ?>
                 <div class="modal-body">
                     <input type="hidden" value="" id="sale_id" name="sale_id" />
                     <div class="form-group">

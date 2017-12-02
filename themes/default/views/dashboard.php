@@ -131,7 +131,7 @@ $('#chart2').highcharts({
                     </a>
                     <a class="btn btn-app" href="<?= site_url('sales/opened'); ?>">
                         <!-- <span class="badge bg-yellow"><?=sizeof($suspended_sales);?></span> -->
-                        <i class="fa fa-bell-o"></i> <?= lang('opened_bills'); ?>
+                        <i class="fa fa-bell-o"></i> <?= lang('opened_billss'); ?>
                     </a>
                     <?php } ?>
                     <a class="btn btn-app" href="<?= site_url('categories'); ?>">
