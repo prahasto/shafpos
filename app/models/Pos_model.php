@@ -17,7 +17,7 @@ class Pos_model extends CI_Model
             return array();
         }
     }
-	
+
 	public function getReturNo($term, $limit = 10) {
 
         //$this->db->select("{$this->db->dbprefix('sales')}.*");
@@ -27,7 +27,7 @@ class Pos_model extends CI_Model
         $this->db->like('salesno', $term);
         //$this->db->or_like('customer_name', $term);
 		//$this->db->limit($limit);
-		
+
 
         $q = $this->db->get('tec_sales');
 		/*$q = $this->db->query('select id,salesno,customer_name from tec_sales
@@ -52,7 +52,7 @@ class Pos_model extends CI_Model
         $this->db->like('salesno', $term);
         $this->db->or_like('customer_name', $term);
 		$this->db->limit($limit);
-		
+
 
         $q = $this->db->get('tec_sales');
         if ($q->num_rows() > 0) {
@@ -74,11 +74,11 @@ class Pos_model extends CI_Model
         //    $this->db->where("(name LIKE '%{$term}%' OR phone LIKE '%{$term}%' OR  email '%{$term}%')");
        // }
         //$this->db->group_by('products.id')->limit($limit);
-        $this->db->select('id,name, phone, email');
+        $this->db->select('id,name, phone, email,jmlpoin,usr_customergrup_id,kdcustomer,nominalsales');
         $this->db->like('name', $term);
         $this->db->or_like('phone', $term);
         $this->db->or_like('email', $term);
-        
+
         $q = $this->db->get('tec_customers');
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
@@ -94,7 +94,7 @@ class Pos_model extends CI_Model
     {
        $lastno ='';
       // $tglKode=date('dmY',strtotime($date));
-	  
+
        $query = $this->db->query("SELECT COALESCE(MAX(substr(salesno, 14,3)),0)+1 AS counter
                             FROM tec_sales
                              WHERE substr(salesno, 1 , 3)='".$orgCode."'
@@ -114,7 +114,7 @@ class Pos_model extends CI_Model
            }
 
       // $lastno=$row->counter;
-	     
+
        }
        return $lastno.$typetrans;
     }
@@ -278,7 +278,7 @@ class Pos_model extends CI_Model
             $user_id = $this->session->userdata('user_id');
         }
 
-        
+
         $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', FALSE)
             ->join('sales', 'sales.id=payments.sale_id', 'left')
             ->where('payments.date >', $date);
@@ -498,6 +498,13 @@ class Pos_model extends CI_Model
         return FALSE;
     }
 
+    public function add_arrival($arrival) {
+        if ($this->db->insert('tec_usr_arrival', $arrival)) {
+            return true;
+        }
+        return FALSE;
+    }
+
     public function openRegister($data) {
         if ($this->db->insert('registers', $data)) {
             return true;
@@ -566,18 +573,18 @@ class Pos_model extends CI_Model
 			 foreach ($products as $item) {
 				$n=$item['product_id'];
                 $item['sale_id'] = $sale_id;
-                if($this->db->insert('sale_items', $item)) 
+                if($this->db->insert('sale_items', $item))
 				{
 					$sale_ids = $this->db->insert_id();
 				}
-			 }   
-                
-            
+			 }
+
+
 			 return $data['salesno'];
 		}
 		  return false;
 	}
-	
+
     public function addSale($data, $items, $payment = array(), $did = NULL) {
         $data['usr_tipetrans_id']=12;
 
@@ -610,12 +617,12 @@ class Pos_model extends CI_Model
             }
             $msg = array();
             if(!empty($payment)) {
-                
+
 				foreach ($payment as $payments) {
 				   $payments['sale_id'] = $sale_id;
                    $this->db->insert('payments', $payments);
 				}
-                
+
             }
 
             return array('sale_id' => $sale_id, 'message' => $msg);
@@ -773,8 +780,8 @@ class Pos_model extends CI_Model
         }
         return FALSE;
     }
-	
-	
+
+
 
     public function getSuspendedSaleItems($id) {
         $q = $this->db->get_where('suspended_items', array('suspend_id' => $id));

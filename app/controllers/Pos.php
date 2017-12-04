@@ -11,11 +11,15 @@ class Pos extends MY_Controller {
         $this->load->helper('pos');
         $this->load->model('pos_model');
         $this->load->library('form_validation');
-		
-		
 
     }
 
+    function getmfates(){
+        $rowjson = $this->site->getBank();
+
+        echo json_encode($rowjson);
+
+    }
     function getPaidbyid() {
         $saleid = $this->input->get('padibyid');
         $obj = $this->site->getPaidHtml($saleid);
@@ -24,18 +28,18 @@ class Pos extends MY_Controller {
 
     }
 
-	
+
 	function addretur(){
 		$saleid = $this->input->get('salesid');
 		$arr = $this->input->get('lretur');
 		$npaid=0;
 		$myJSON = json_decode($arr);
-		
+
 		$date = date('Y-m-d');
-		
+
         $dates = date('dmY',strtotime($date));
         $salesreturno =  $this->pos_model->getLastNo($dates,$this->site->getStoreCode(),'R');
-		$customer_id = 1;	
+		$customer_id = 1;
 		$customer='joni wkwk';
 		$grand_total=1000;
 		 $store_id=1;
@@ -66,7 +70,7 @@ class Pos extends MY_Controller {
            }
         }
 		$data = array(
-                'salesno' => $salesreturno, 
+                'salesno' => $salesreturno,
                 'date' => $date,
                 'customer_id' => $customer_id,
                 'customer_name' => $customer,
@@ -89,8 +93,8 @@ class Pos extends MY_Controller {
                 //'note' => $note,
                 //'hold_ref' => $this->input->post('hold_ref'),*/
                 );
-				
-								
+
+
 				//$this->session->set_flashdata('message', 'wers');
 				$sale = $this->pos_model->addretur($data,$products);
 		echo json_encode(array('msg' =>$salesreturno));
@@ -145,7 +149,7 @@ class Pos extends MY_Controller {
    }
 
     function index($sid = NULL, $eid = NULL) {
-		  
+
         if (!$this->Settings->multi_store) {
             $this->session->set_userdata('store_id', 1);
         }
@@ -153,10 +157,10 @@ class Pos extends MY_Controller {
             $this->session->set_flashdata('warning', lang("please_select_store"));
             redirect($this->Settings->multi_store ? 'stores' : 'welcome');
         }
-        if( $this->input->get('hold') ) 
-		    { 
+        if( $this->input->get('hold') )
+		    {
 		       $sid = $this->input->get('hold');
-               //$this->session->set_flashdata('message','dw');		
+               //$this->session->set_flashdata('message','dw');
 			}
         if( $this->input->get('edit') ) { $eid = $this->input->get('edit'); }
         if( $this->input->post('eid') ) { $eid = $this->input->post('eid'); }
@@ -189,7 +193,7 @@ class Pos extends MY_Controller {
             $product = "product";
             $unit_cost = "unit_cost";
             $tax_rate = "tax_rate";
-              
+
            // $date = $eid ? $this->input->post('date') : date('Y-m-d H:i:s');salesdate
             $date = $eid ? $this->input->post('date') : date('Y-m-d H:i:s');
             $dates = date('dmY',strtotime($date));
@@ -211,7 +215,7 @@ class Pos extends MY_Controller {
             $order_discount = 0;
             $percentage = '%';
             $i = isset($_POST['product_id']) ? sizeof($_POST['product_id']) : 0;
-			
+
             for ($r = 0; $r < $i; $r++) {
                 $item_id = $_POST['product_id'][$r];
                 $real_unit_price = $this->tec->formatDecimal($_POST['real_unit_price'][$r]);
@@ -406,7 +410,7 @@ class Pos extends MY_Controller {
             if (!$eid) {
                 $data['store_id'] = $this->session->userdata('store_id');
             }
-             
+
             if (!$eid && !$suspend && $paid) {
 				//add payment
 				$arr=$this->input->post('pos_paying_by');
@@ -420,7 +424,7 @@ class Pos extends MY_Controller {
 				   $nedcid = $myJSON->$k->edcid;
 				   $nbankid = $myJSON->$k->bankid;
 				   $nreff = $myJSON->$k->reffnumber;
-				   
+
 				   $payment[] = array(
                         'date' => $date,
 						'amount' => $namount,
@@ -435,14 +439,14 @@ class Pos extends MY_Controller {
 						'note' => $this->input->post('payment_note'),
 						'pos_paid' => $this->tec->formatDecimal($this->input->post('amount')),
 						'pos_balance' => $this->tec->formatDecimal($this->input->post('balance_amount'))
-                        );	
-						
+                        );
+
 				   $npaid=$npaid+$namount;
                 }
-				
-				
-				$data['paid'] = $npaid;	
-           
+
+
+				$data['paid'] = $npaid;
+
 				//$amount = $this->tec->formatDecimal($paid > $grand_total ? ($paid - $this->input->post('balance_amount')) : $paid);
                 /*$payment = array(
                     'date' => $date,
@@ -508,7 +512,7 @@ class Pos extends MY_Controller {
 
             } else {
 //alert("add sales"); payment
-                 
+
                 if($sale = $this->pos_model->addSale($data, $products, $payment, $did)) {
                     $this->session->set_userdata('rmspos', 1);
                     $msg = lang("sale_added");
@@ -624,6 +628,10 @@ class Pos extends MY_Controller {
             $this->data['message'] = $this->session->flashdata('message');
             $this->data['suspended_sales'] = $this->site->getUserSuspenedSales();
 
+
+
+
+
             $this->data['printer'] = $this->site->getPrinterByID($this->Settings->printer);
             $printers = array();
             if (!empty($order_printers = json_decode($this->Settings->order_printers))) {
@@ -684,7 +692,7 @@ class Pos extends MY_Controller {
         }
 
     }
-	
+
 	function autocompleteretursno() {
         $term = $this->input->get('term', TRUE);
 
@@ -711,7 +719,8 @@ class Pos extends MY_Controller {
             foreach ($rows as $row) {
                 $cust[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id,
                     'name' => $row->salesno,
-                    'label' => $row->salesno,
+                    'label' => $row->salesno . "-" . $row->customer_name,
+
                     'cust_name'=>$row->customer_name);
             }
             echo json_encode($cust);
@@ -744,6 +753,12 @@ class Pos extends MY_Controller {
             foreach ($rows as $row) {
                 $cust[] = array('id' => str_replace(".", "", microtime(true)), 'item_id' => $row->id,
                  'name' => $row->name,
+                 'nominalsales' =>  $this->tec->formatMoney($row->nominalsales),
+                  'sales'=> $row->sales,
+                    'poin'=> $row->jmlpoin,
+                    'kdcustomer'=> $row->kdcustomer,
+                    'email'=> $row->email,
+                    'phone'=> $row->phone,
                  'label' => $row->name . " (" . $row->email . " | ". $row->phone . ")");
             }
             echo json_encode($cust);
@@ -762,6 +777,7 @@ class Pos extends MY_Controller {
                 $row->qty = 1;
                 $row->comment = '';
                 $row->discount = '0';
+                $row->discountpersen = 0;
                 $row->price = $row->store_price > 0 ? $row->store_price : $row->price;
                 $row->real_unit_price = $row->price;
                 $row->unit_price = $row->tax ? ($row->price+(($row->price*$row->tax)/100)) : $row->price;
@@ -862,6 +878,12 @@ class Pos extends MY_Controller {
                 'closed_by' => $this->session->userdata('user_id'),
                 );
 
+            $arrival = array('tgltrans' => date('Y-m-d'),
+                'store_id' =>$this->session->userdata('store_id'),
+                'nilai' => $this->input->post('total_arrival'),
+            );
+
+            //$this->session->set_flashdata('error',$this->input->post('total_arrival') );
             // $this->tec->print_arrays($data);
 
         } elseif ($this->input->post('close_register')) {
@@ -870,6 +892,8 @@ class Pos extends MY_Controller {
         }
 
         if ($this->form_validation->run() == true && $this->pos_model->closeRegister($rid, $user_id, $data)) {
+
+            $this->pos_model->add_arrival($arrival);
             $this->session->unset_userdata('register_id');
             $this->session->unset_userdata('cash_in_hand');
             $this->session->unset_userdata('register_open_time');

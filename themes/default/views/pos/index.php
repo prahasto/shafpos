@@ -369,6 +369,7 @@
                                     }
                                     ?>
                                     <?= form_dropdownplaceholder('mfaid', $cat, set_value('mfaid'), 'class="form-control select2 tip" id="mfadropdown"  style="width:100%;"'); ?>
+
                                 </div>
 
                                 <!-- end dropdown mfa-->
@@ -506,34 +507,35 @@
                         <?=form_close();?>
                 </td>  <!-- end td-->
 
-                <td>
-                    <div id="pos">
-                        <div class="well well-sm" id="leftdiv">
-                            <div class="box-body box-profile" align="center">
+                <td class="col-sm-3">
+                    <div id="pos" >
+
+                        <div class="well  well-sm " id="leftdiv">
+                            <div class="box-body box-profile " align="center">
                                 <img class="profile-user-img img-responsive img-circle"
                                      src="<?php echo base_url('themes/default/assets/dist/img/user4-128x128.jpg'); ?>">
-                                <span class="info-box-number">5457.03.17</span>
-                                <span class="info-box-text">admin@shafco.com - 082117500817 </span>
+                                <span id="custkode" class="info-box-number">Cust Code</span>
+                                <span id="emailphone" class="info-box-text">Email-Phone</span>
                             </div>
                             <div class="row">
                                 <div class="col-sm-4 border-right">
                                     <div class="description-block">
-                                        <h5 class="description-header">3,200</h5>
-                                        <span class="description-text">POINT</span>
+                                        <h5 id="custpoin" class="description-header">0</h5>
+                                        <span class="description-text">Transaction</span>
                                     </div>
                                 </div>
                                 <div class="col-sm-4 border-right">
                                     <div class="description-block">
-                                        <h5 class="description-header">13,000</h5>
-                                        <span class="description-text">SALES</span>
+                                        <h5 id="nominalsales" class="description-header">0</h5>
+                                        <span   class="description-text">Sales </span>
                                     </div>
                                     <!-- /.description-block -->
                                 </div>
                                 <!-- /.col -->
                                 <div class="col-sm-4">
                                     <div class="description-block">
-                                        <h5 class="description-header">35</h5>
-                                        <span class="description-text">PRODUCTS</span>
+                                        <h5 id="custsales" class="description-header">0</h5>
+                                        <span class="description-text">POINT</span>
                                     </div>
                                     <!-- /.description-block -->
                                 </div>
@@ -541,14 +543,14 @@
                             </div>
                             <!-- /.row -->
                         </div>
+
                         <!-- Retur -->
                         <div class="row">
                             <div class="btn-group col-sm-12">
                                 <button style="z-index:10003;" class=" col-sm-12 btn btn-danger pos-tip btn-flat" type="button" id="salesretur_id"><i class="fa fa-credit-card" id="addIcon"></i> Sales Retur </button>
                             </div>
                         </div>
-
-
+                      </div>
                         <!-- ENd Retur -->
                 </td>
 
@@ -1240,7 +1242,7 @@
                     </div>
                 </div>
                 <div class="modal-footer" style="margin-top:0;">
-                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal"> <?=lang('close')?> </button>
+                    <button type="button" class="btn btn-default pull-left" id="closeretur" data-dismiss="modal"> <?=lang('close')?> </button>
                     <button type="button" class="btn btn-primary" id="submit_retur" onclick=""> Add Retur </button>
                 </div>
             </form>
@@ -1338,6 +1340,12 @@
     lang['merchant_copy'] = '<?= lang('merchant_copy'); ?>';
 
     $(document).ready(function() {
+        //alert(<?=$ate;?>);
+      //  store('mfa', JSON.stringify(<?=datamfa;?>));
+       // store('spositems', JSON.stringify(<?=$items;?>));
+
+
+
         <?php if ($this->session->userdata('rmspos')) { ?>
         if (get('spositems')) { remove('spositems'); }
         if (get('spos_discount')) { remove('spos_discount'); }
@@ -1432,6 +1440,9 @@
     <?php
     }
     ?>
+
+
+
     function printBill(bill) {
         if (Settings.remote_printing == 1) {
             Popup($('#bill_tbl').html());

@@ -106,7 +106,9 @@
                             <?= lang("total_cheques", "total_cheques_submitted"); ?>
                             <?= form_hidden('total_cheques', $chsales->total_cheques); ?>
                             <?= form_input('total_cheques_submitted', (isset($_POST['total_cheques_submitted']) ? $_POST['total_cheques_submitted'] : $chsales->total_cheques), 'class="form-control input-tip" id="total_cheques_submitted" required="required"'); ?>
+
                         </div>
+
                     </div>
                     <div class="col-sm-6">
                         <?php if ($suspended_bills) { ?>
@@ -129,6 +131,10 @@
                             <?= lang("total_cc_slips", "total_cc_slips_submitted"); ?>
                             <?= form_hidden('total_cc_slips', $ccsales->total_cc_slips); ?>
                             <?= form_input('total_cc_slips_submitted', (isset($_POST['total_cc_slips_submitted']) ? $_POST['total_cc_slips_submitted'] : $ccsales->total_cc_slips), 'class="form-control input-tip" id="total_cc_slips_submitted" required="required"'); ?>
+                        </div>
+                        <div class="form-group">
+                            <?= lang("Total Arival", "total_cheques_submitted"); ?>
+                            <?= form_input('total_arrival','', 'class="form-control input-tip" id="total_arrival" required="required"'); ?>
                         </div>
                     </div>
                 </div>
