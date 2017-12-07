@@ -123,7 +123,14 @@ class Site extends CI_Model
         $data = $q->result_array();
         return $data[0]['code'];
     }
-	
+
+    function getStorePKP() {
+        $this->db->where('islive', 1);
+        $q = $this->db->get('stores');
+        $data = $q->result_array();
+        return $data[0]['kode_cabang_pkp'];
+    }
+
 	 public function getMFAByStoreID($storeid) {
 		
         $this->db->order_by('name');
@@ -143,7 +150,7 @@ class Site extends CI_Model
         //$this->db->order_by('bank');
 		//$this->db->where('store_id', $storeid);
         //$q = $this->db->get('usr_bank');
-		$sql = "select * from usr_bank order by bank";
+		$sql = "select * from tec_usr_bank order by bank";
 		$q = $this->db->query($sql);//->result_array();
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
@@ -154,13 +161,19 @@ class Site extends CI_Model
         return FALSE;
     }
 	
-	public function getEDC() {
-		$sql = "select * from usr_edc order by edc";
-		$q = $this->db->query($sql);//->result_array();
+	public function getEDC($storeid,$edc_type) {
+		//$sql = "select * from tec_usr_edc order by edc";
+		//$q = $this->db->query($sql);//->result_array();
+
+        $this->db->order_by('edc');
+        $this->db->where('store_id', $storeid);
+        $this->db->where('edc_type', $edc_type);
+        $q = $this->db->get('usr_edc');
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
                 $data[] = $row;
             }
+
             return $data;
         }
         return FALSE;
@@ -169,7 +182,7 @@ class Site extends CI_Model
 
     public function getPaidHtml($paidbyid)
     {
-        $sql = "select * from usr_paid_by where paid_by_id='".$paidbyid."'";
+        $sql = "select * from tec_usr_paid_by where paid_by_id='".$paidbyid."'";
         $query = $this->db->query($sql)->result_array();
         //if( $query->num_rows() > 0 ) {
             return $query;//->result();
@@ -179,7 +192,7 @@ class Site extends CI_Model
 
 	
 	public function getPaidBy() {
-		$sql = "select * from usr_paid_by order by paid_by_id";
+		$sql = "select * from tec_usr_paid_by order by paid_by_id";
 		$q = $this->db->query($sql);//->result_array();
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {

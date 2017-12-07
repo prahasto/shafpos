@@ -13,12 +13,13 @@ if ($modal) {
                 <html>
                 <head>
                     <meta charset="utf-8">
-                    <title><?= $page_title . " " . lang("no") . " " . $inv->id; ?></title>
-                    <base href="<?= base_url() ?>"/>
+                    <title>Invoice</title>
+                    <!-- <title><?= $page_title . " " . lang("no") . " " . $inv->salesno; ?></title> -->
                     <meta http-equiv="cache-control" content="max-age=0"/>
                     <meta http-equiv="cache-control" content="no-cache"/>
                     <meta http-equiv="expires" content="0"/>
                     <meta http-equiv="pragma" content="no-cache"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
                     <link rel="shortcut icon" href="<?= $assets ?>images/icon.png"/>
                     <link href="<?= $assets ?>dist/css/styles.css" rel="stylesheet" type="text/css" />
                     <style type="text/css" media="all">
@@ -32,16 +33,17 @@ if ($modal) {
 
                         @media print {
                             .no-print { display: none; }
-                            #wrapper { max-width: 480px; width: 100%; min-width: 250px; margin: 0 auto; }
+                            #wrapper { max-width: 420px; width: 100%; min-width: 50px; margin: auto; }
                         }
                     </style>
                 </head>
                 <body>
+
                     <?php
                 }
                 ?>
                 <div id="wrapper">
-                    <div id="receiptData" style="width: auto; max-width: 580px; min-width: 250px; margin: 0 auto;">
+                    <div id="receiptData" style="width: auto; max-width: 580px; min-width: 250px; margin: auto;">
                         <div class="no-print">
                             <?php if ($message) { ?>
                             <div class="alert alert-success">
@@ -52,31 +54,35 @@ if ($modal) {
                         </div>
                         <div id="receipt-data">
                             <div>
-                                <div style="text-align:center;">
+                               <!-- <div style="text-align:center;">
                                     <?php
                                     if ($store) {
-                                        echo '<img src="'.base_url('uploads/'.$store->logo).'" alt="'.$store->name.'">';
-                                        echo '<p style="text-align:center;">';
-                                        echo '<strong>'.$store->name.'</strong><br>';
+                                        echo '<br>';
                                         echo $store->address1.'<br>'.$store->address2;
                                         echo $store->city.'<br>'.$store->phone;
                                         echo '</p>';
                                         echo '<p>'.nl2br($store->receipt_header).'</p>';
                                     }
                                     ?>
-                                </div>
+                                </div> -->
                                 <p>
-                                    <?= lang("date").': '.$this->tec->hrld($inv->date); ?> <br>
-                                    <?= lang('sale_no_ref').': '.$inv->id; ?><br>
-                                    <?= lang("customer").': '. $inv->customer_name; ?> <br>
-                                    <?= lang("sales_person").': '. $created_by->first_name." ".$created_by->last_name; ?> <br>
+                                    <strong>No Seri : <?=$inv->nofaktur_pajak; ?> <br>
+                                    PERUSAHAAN KENA PAJAK<br>
+                                    NAMA : PT.SHAFCO MULTI TRADING<br>
+                                    ALAMAT : JL. BUAH BATU DALAM V NO 109/105 CIJAGRA LENGKONG<br>
+                                    NPWP : <?=$inv->npwp; ?>  </strong>
+                                <hr style=" width: 100%; border-bottom: 2px solid #ddd;">
+                                   <?=$store->name; ?> <br>
+                                <?= $store->address1.'<br>'; ?>
+                                Telp :  <?= $store->phone ?><br>
+                                <?=  date('d-m-Y H:i:s',strtotime( $inv->date)); ?> <br>
                                 </p>
                                 <div style="clear:both;"></div>
                                 <table class="table table-striped table-condensed">
                                     <thead>
                                         <tr>
-                                            <th style="text-align:center; width: 50%; border-bottom: 2px solid #ddd;"><?=lang('description');?></th>
-                                            <th style="text-align:center; width: 12%; border-bottom: 2px solid #ddd;"><?=lang('quantity');?></th>
+                                            <th style="text-align:center; width: 50%; border-bottom: 2px solid #ddd;">CODE</th>
+                                            <th style="text-align:center; width: 12%; border-bottom: 2px solid #ddd;">QTY</th>
                                             <th style="text-align:center; width: 24%; border-bottom: 2px solid #ddd;"><?=lang('price');?></th>
                                             <th style="text-align:center; width: 26%; border-bottom: 2px solid #ddd;"><?=lang('subtotal');?></th>
                                         </tr>
@@ -85,24 +91,32 @@ if ($modal) {
                                         <?php
                                         $tax_summary = array();
                                         foreach ($rows as $row) {
-                                            echo '<tr><td style="text-align:left;">' . $row->product_name .'</td>';
-                                            echo '<td style="text-align:center;">' . $this->tec->formatQuantity($row->quantity) . '</td>';
-                                            echo '<td style="text-align:right;">';
+                                            echo '<tr><td colspan="4" style="text-align:left;">' . $row->product_code .' - '. $row->product_name .'</td></tr>';
+                                            echo '<tr><td></td><td  style="text-align:center;">' . $this->tec->formatQuantity($row->quantity) . '</td>'; echo '<td style="text-align:right;">';
                                             echo $this->tec->formatMoney($row->net_unit_price + ($row->item_tax / $row->quantity)) . '</td><td style="text-align:right;">' . $this->tec->formatMoney($row->subtotal) . '</td></tr>';
+                                            if ($row->disc_persen > 0){
+                                                echo '<tr><td colspan="2">Discount</td>'; echo '<td style="text-align:right;">';
+                                                echo $this->tec->formatMoney($row->subtotal*($row->disc_persen/100)) . '</td><td style="text-align:right;">' . $this->tec->formatMoney($row->subtotal-($row->subtotal*($row->disc_persen/100))) . '</td></tr>';
+                                            }
+
                                         }
                                         ?>
                                     </tbody>
                                     <tfoot>
+                                    <tr>
+                                        <th colspan="2" style="text-align:left;">Total Items(Qty)</th>
+                                        <th colspan="2" style="text-align:right;"><?= $this->tec->formatdecimal($inv->total_items).'('.$this->tec->formatdecimal($inv->total_quantity).')'; ?></th>
+                                    </tr>
                                         <tr>
-                                            <th colspan="2" style="text-align:left;"><?= lang("total"); ?></th>
-                                            <th colspan="2" style="text-align:right;"><?= $this->tec->formatMoney($inv->total + $inv->product_tax); ?></th>
+                                            <th colspan="2" style="text-align:left;"><?= lang("total"); ?> Harga Jual</th>
+                                            <!-- <th colspan="2" style="text-align:right;"><?= $this->tec->formatMoney($inv->total + $inv->product_tax); ?></th> --><th colspan="2" style="text-align:right;"><?= $this->tec->formatMoney($inv->total ); ?></th>
                                         </tr>
                                         <?php
                                         if ($inv->order_tax != 0) {
                                             echo '<tr><th colspan="2" style="text-align:left;">' . lang("order_tax") . '</th><th colspan="2" style="text-align:right;">' . $this->tec->formatMoney($inv->order_tax) . '</th></tr>';
                                         }
-                                        if ($inv->total_discount != 0) {
-                                            echo '<tr><th colspan="2" style="text-align:left;">' . lang("order_discount") . '</th><th colspan="2" style="text-align:right;">' . $this->tec->formatMoney($inv->total_discount) . '</th></tr>';
+                                       if ($inv->total_discount != 0) {
+                                            echo '<tr><th colspan="2" style="text-align:left;">Potongan Harga</th><th colspan="2" style="text-align:right;">' . $this->tec->formatMoney($inv->total_discount) . '</th></tr>';
                                         }
 
                                         if ($Settings->rounding) {
@@ -110,13 +124,31 @@ if ($modal) {
                                             $rounding = $this->tec->formatDecimal($round_total - $inv->grand_total);
                                             ?>
                                             <tr>
-                                                <th colspan="2" style="text-align:left;"><?= lang("rounding"); ?></th>
-                                                <th colspan="2" style="text-align:right;"><?= $this->tec->formatMoney($rounding); ?></th>
+                                                <th colspan="2" style="text-align:left;">Potongan Poin</th>
+                                                <th colspan="2" style="text-align:right;">0</th>
+                                            </tr>
+
+                                            <tr> <?php
+                                                echo '<th colspan="2" style="text-align:left;">Total Harus Dibayar</th>';
+                                                echo '<th colspan="2" style="text-align:right;">'.$this->tec->Formatmoney($inv->total+$inv->order_tax-$inv->total_discount).'</th>'; ?>
+                                            </tr>
+                                           <!-- <tr>
+                                                <th colspan="2" style="text-align:left;">DP</th>
+                                                <th colspan="2" style="text-align:right;">0</th>
+                                            </tr>-->
+                                            <tr><?php
+                                                echo '<th colspan="2" style="text-align:left;">DPP</th>';
+                                                echo '<th colspan="2" style="text-align:right;">'.$this->tec->formatMoney(($inv->total+$inv->order_tax-$inv->total_discount)/1.1).' </th>';?>
                                             </tr>
                                             <tr>
+                                                <?php
+                                                echo '<th colspan="2" style="text-align:left;">PPN= 10% x DPP</th>';
+                                                echo '<th colspan="2" style="text-align:right;">'.$this->tec->formatMoney((($inv->total+$inv->order_tax-$inv->total_discount)/1.1)*0.1).' </th>';?>
+                                            </tr>
+                                           <!-- <tr>
                                                 <th colspan="2" style="text-align:left;"><?= lang("grand_total"); ?></th>
                                                 <th colspan="2" style="text-align:right;"><?= $this->tec->formatMoney($inv->grand_total + $rounding); ?></th>
-                                            </tr>
+                                            </tr> -->
                                             <?php
                                         } else {
                                             $round_total = $inv->grand_total;
@@ -144,39 +176,30 @@ if ($modal) {
                                     echo '<table class="table table-striped table-condensed" style="margin-top:10px;"><tbody>';
                                     foreach ($payments as $payment) {
                                         echo '<tr>';
-                                        if ($payment->paid_by == 'cash' && $payment->pos_paid) {
-                                            echo '<td style="padding-left:15px;">' . lang("paid_by") . ': ' . lang($payment->paid_by) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("amount") . ': ' . $this->tec->formatMoney($payment->pos_paid == 0 ? $payment->amount : $payment->pos_paid) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("change") . ': ' . ($payment->pos_balance > 0 ? $this->tec->formatMoney($payment->pos_balance) : 0) . '</td>';
-                                        }
-                                        if (($payment->paid_by == 'CC' || $payment->paid_by == 'ppp' || $payment->paid_by == 'stripe') && $payment->cc_no) {
-                                            echo '<td style="padding-left:15px;">' . lang("paid_by") . ': ' . lang($payment->paid_by) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("amount") . ': ' . $this->tec->formatMoney($payment->pos_paid) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("no") . ': ' . 'xxxx xxxx xxxx ' . substr($payment->cc_no, -4) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("name") . ': ' . $payment->cc_holder . '</td>';
-                                        }
-                                        if ($payment->paid_by == 'Cheque' || $payment->paid_by == 'cheque' && $payment->cheque_no) {
-                                            echo '<td style="padding-left:15px;">' . lang("paid_by") . ': ' . lang($payment->paid_by) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("amount") . ': ' . $this->tec->formatMoney($payment->pos_paid) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("cheque_no") . ': ' . $payment->cheque_no . '</td>';
-                                        }
-                                        if ($payment->paid_by == 'gift_card' && $payment->pos_paid) {
-                                            echo '<td style="padding-left:15px;">' . lang("paid_by") . ': ' . lang($payment->paid_by) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("no") . ': ' . $payment->gc_no . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("amount") . ': ' . $this->tec->formatMoney($payment->pos_paid) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("balance") . ': ' . ($payment->pos_balance > 0 ? $this->tec->formatMoney($payment->pos_balance) : 0) . '</td>';
-                                        }
-                                        if ($payment->paid_by == 'other' && $payment->amount) {
-                                            echo '<td style="padding-left:15px;">' . lang("paid_by") . ': ' . lang($payment->paid_by) . '</td>';
-                                            echo '<td style="padding-left:15px;">' . lang("amount") . ': ' . $this->tec->formatMoney($payment->pos_paid == 0 ? $payment->amount : $payment->pos_paid) . '</td>';
-                                            echo $payment->note ? '</tr><td colspan="2">' . lang("payment_note") . ': ' . $payment->note . '</td>' : '';
-                                        }
+
+                                            echo '<td style="padding-left:15px;">' . lang($payment->paid_by) . '</td>';
+                                            echo '<td style="padding-left:15px;">' . $this->tec->formatMoney($payment->amount) . '</td>';
+                                            echo '<td style="padding-left:15px;">' . ($payment->pos_balance > 0 ? $this->tec->formatMoney($payment->pos_balance) : 0) . '</td>';
+
+
+                                        echo '</tr>';
+                                    }
+
+                                    foreach ($brands as $brand) {
+                                        echo '<tr>';
+                                        echo '<td style="padding-left:15px;">' . lang($brand->nmbrand) . '</td>';
+                                        echo '<td style="padding-left:15px;">' . $this->tec->formatMoney($brand->total) . '</td>';
+
+
+
                                         echo '</tr>';
                                     }
                                     echo '</tbody></table>';
                                 }
 
                                 ?>
+
+
 
                                 <?= $inv->note ? '<p style="margin-top:10px; text-align: center;">' . $this->tec->decode_html($inv->note) . '</p>' : ''; ?>
                                 <?php if (!empty($store->receipt_footer)) { ?>
@@ -234,15 +257,15 @@ if ($modal) {
                         </div>
                         <!-- end -->
                     </div>
-                </div>
+              </div>
                 <!-- start -->
                 <?php
                 if (!$modal) {
                     ?>
                     <script type="text/javascript">
-                        var base_url = '<?=base_url();?>';
-                        var site_url = '<?=site_url();?>';
-                        var dateformat = '<?=$Settings->dateformat;?>', timeformat = '<?= $Settings->timeformat ?>';
+                        var base_url = '<?=base_urls();?>';
+                        var site_url = '<?=site_urls();?>';
+                       var dateformat = '<?=$Settings->dateformat;?>', timeformat = '<?= $Settings->timeformat ?>';
                         <?php unset($Settings->protocol, $Settings->smtp_host, $Settings->smtp_user, $Settings->smtp_pass, $Settings->smtp_port, $Settings->smtp_crypto, $Settings->mailpath, $Settings->timezone, $Settings->setting_id, $Settings->default_email, $Settings->version, $Settings->stripe, $Settings->stripe_secret_key, $Settings->stripe_publishable_key); ?>
                         var Settings = <?= json_encode($Settings); ?>;
                     </script>

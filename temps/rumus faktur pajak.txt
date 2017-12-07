@@ -1,0 +1,4 @@
+<?= lang("date").': '.$this->tec->hrld($inv->date); ?> <br>
+                                    <?= lang('sale_no_ref').': '.$inv->salesno; ?><br>
+                                    <?= lang("customer").': '. $inv->customer_name; ?> <br>
+                                    <?= lang("sales_person").': '. $created_by->first_name." ".$created_by->last_name; ?> <br>

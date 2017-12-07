@@ -90,7 +90,7 @@ class Pos_model extends CI_Model
     }
 
     //public function getLastNo($storecode=null,$date=null,$typetrans)
-    public function getLastNo($date,$orgCode,$typetrans='')
+    public function getLastSalesNo($date,$orgCode,$typetrans='')
     {
        $lastno ='';
       // $tglKode=date('dmY',strtotime($date));
@@ -117,6 +117,48 @@ class Pos_model extends CI_Model
 
        }
        return $lastno.$typetrans;
+    }
+
+
+    public function getLastFakturPajak($date,$pkpcode)
+    {
+        $tglFakturPajak=date('y',strtotime($date));
+        // $tglKode=date('dmY',strtotime($date));
+        $tmpFakturPajak='010.'.$pkpcode.'-'.$tglFakturPajak.'.';
+        $query = $this->db->query("SELECT COALESCE(MAX(substr(nofaktur_pajak, 12,8)),0)+1 AS counter
+                            FROM tec_sales
+                             WHERE substr(salesno, 1 , 3) like '%".$tmpFakturPajak."%'");
+        $row = $query->row();
+        if (isset($row)) {
+            if($row->counter<10){
+                $fakturPajak=$tmpFakturPajak.'0000000'.$row->counter;
+            }
+            elseif($row->counter<100){
+                $fakturPajak=$tmpFakturPajak.'000000'.$row->counter;
+            }
+            elseif($row->counter<1000){
+                $fakturPajak=$tmpFakturPajak.'00000'.$row->counter;
+            }
+            elseif($row->counter<10000){
+                $fakturPajak=$tmpFakturPajak.'0000'.$row->counter;
+            }
+            elseif($row->counter<100000){
+                $fakturPajak=$tmpFakturPajak.'000'.$row->counter;
+            }
+            elseif($row->counter<1000000){
+                $fakturPajak=$tmpFakturPajak.'00'.$row->counter;
+            }
+            elseif($row->counter<10000000){
+                $fakturPajak=$tmpFakturPajak.'0'.$row->counter;
+            }
+            elseif($row->counter<100000000){
+                $fakturPajak=$tmpFakturPajak.$row->counter;
+            }
+
+            // $lastno=$row->counter;
+
+        }
+        return $fakturPajak;
     }
 
     public function getProductNames($term, $limit = 10) {
@@ -544,6 +586,8 @@ class Pos_model extends CI_Model
         return FALSE;
     }
 
+
+
     public function getCustomerByID($id) {
         $q = $this->db->get_where('customers', array('id' => $id), 1);
           if( $q->num_rows() > 0 ) {
@@ -658,6 +702,8 @@ class Pos_model extends CI_Model
         return false;
     }
 
+
+
     public function updateSale($id, $data, $items) {
         $osale = $this->getSaleByID($id);
         $oitems = $this->getAllSaleItems($id);
@@ -761,6 +807,24 @@ class Pos_model extends CI_Model
         }
         return FALSE;
     }
+
+
+
+    public function getGroupBrand($id) {
+        $this->db->select('tec_usr_brand.nmbrand,sum(tec_sale_items.total) as total')
+            ->join('products', 'products.id=sale_items.product_id', 'left')
+            ->join('usr_brand', 'usr_brand.usr_brand_id=products.usr_brand_id', 'left')
+            ->group_by('tec_usr_brand.nmbrand');
+        $q = $this->db->get_where('sale_items', array('sale_id' => $id));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
+
 
     public function getAllSalePayments($sale_id) {
         $q = $this->db->get_where('payments', array('sale_id' => $sale_id));

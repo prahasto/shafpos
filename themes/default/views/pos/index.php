@@ -429,9 +429,9 @@
                                             <td class="text-right" colspan="2"><span id="total">0</span></td>
                                         </tr>
                                         <tr class="info">
-                                            <td width="25%"><a href="#" id="add_discount"><?=lang('discount')?></a></td>
+                                            <td width="25%"><?=lang('discount')?></td>
                                             <td class="text-right" style="padding-right:10px;"><span id="ds_con">0</span></td>
-                                            <td width="25%"><a href="#" id="add_tax"><?=lang('order_tax')?></a></td>
+                                            <td width="25%"><?=lang('order_tax')?></td>
                                             <td class="text-right"><span id="ts_con">0</span></td>
                                         </tr>
                                         <tr class="success">
@@ -824,8 +824,8 @@
 <div class="modal" data-easein="flipYIn" id="saleModal" tabindex="-1" role="dialog" aria-labelledby="saleModalLabel" aria-hidden="true"></div>
 <div class="modal" data-easein="flipYIn" id="opModal" tabindex="-1" role="dialog" aria-labelledby="opModalLabel" aria-hidden="true"></div>
 
-<!-- modal payment -->
-<div class="modal" data-easein="flipYIn" id="payModal" tabindex="-1" role="dialog" aria-labelledby="payModalLabel" aria-hidden="true">
+<!-- modal payment <div class="modal" data-easein="flipYIn" id="payModal" tabindex="-1" role="dialog" aria-labelledby="payModalLabel"-->
+<div class="modal" data-easein="flipYIn" id="payModal"  role="dialog" aria-labelledby="payModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-success">
         <div class="modal-content">
             <div class="modal-header">
@@ -866,12 +866,15 @@
                         </div> -->
                         <div class="row">
                             <div class="col-xs-5">
+
                                 <div class="form-group">
                                     <?= lang("amount", "amount"); ?>
                                     <input name="amount" type="text" id="amount"
                                            class="pa form-control kb-pad amount"/>
                                     <input name="amountvalue" type="hidden" id="amountvalue"
                                            class="pa form-control kb-pad amount"/>
+                                    <input name="isedc" type="hidden" id="isedc"
+                                           class="pa form-control"/>
                                 </div>
                             </div>
                             <div class="col-xs-5">
@@ -884,7 +887,7 @@
                                         $paid[$paidBy->paid_by_id] = $paidBy->paid_by;
                                     }
                                     ?>
-                                    <?= form_dropdownplaceholder('paid_by_id', $paid, set_value('paid_by'), 'class="form-control select2  tip" id="paid_by"  style="width:100%;"'); ?>
+                                    <?= form_dropdown('paid_by_id', $paid, set_value('paid_by'), 'class="form-control select2  tip" id="paid_by"  style="width:100%;" data-placeholder="Select a paying by"'); ?>
 
 
                                 </div>
@@ -904,43 +907,19 @@
                             </div>
                             </div> -->
                             <div class="pcc_" style="display:none;">
-
                                 <div class="col-xs-5">
+                                    <!-- <div class="form-group ">
+                                         <?php
+                                    $edcname[""] = "Merchant";
+                                    foreach($edcs as $edc) {
+                                        $edcname[$edc->edc_id] = $edc->edc;
+                                    }
+                                    ?>
+                                        <?= form_dropdownplaceholder('edc_ids', $edcname, set_value('edc'), 'class="form-control select2 tip" id="edc_ids"  style="width:100%;"'); ?>
 
-
+                                    </div> -->
                                     <div class="form-group ">
-                                        <?php
-                                        $bankname[""] = "Bank";
-                                        foreach($banks as $bank) {
-                                            $bankname[$bank->bank_id] = $bank->bank;
-                                        }
-                                        ?>
-                                        <?= form_dropdownplaceholder('bank_id', $bankname, set_value('bank'), 'class="form-control select2 tip" id="bank_id"  style="width:100%;"'); ?>
-                                    </div>
-
-                                    <!-- end dropdown bank
-
-                                    <div class="form-group">
-                                        <select style="width:100%;  id="pcc_type"
-                                        class="form-control pcc_type select2"
-                                        placeholder="<?= lang('card_type') ?>">
-                                        <option value="BCA EDC">BCA EDC</option>
-                                        <option
-                                            value="Mandiri EDC">Mandiri EDC</option>
-                                        <option value="BNI EDC">BNI EDC</option>
-
-                                        </select>
-                                    </div>-->
-                                </div>
-                                <div class="col-xs-5">
-                                    <div class="form-group ">
-                                        <?php
-                                        $edcname[""] = "Merchant";
-                                        foreach($edcs as $edc) {
-                                            $edcname[$edc->edc_id] = $edc->edc;
-                                        }
-                                        ?>
-                                        <?= form_dropdownplaceholder('edc_id', $edcname, set_value('edc'), 'class="form-control select2 tip" id="edc_id"  style="width:100%;"'); ?>
+                                        <select id="edc_id" data-placeholder="Select a Merchant" class="form-control select2 tip" style="width:100%;"'></select>
                                     </div>
                                     <!--
                                     <div class="form-group">
@@ -957,6 +936,34 @@
 
                                     </div>-->
                                 </div>
+                                <div class="col-xs-5">
+
+
+                                    <div class="form-group ">
+                                        <?php
+                                        $bankname[""] = "Bank";
+                                        foreach($banks as $bank) {
+                                            $bankname[$bank->bank_id] = $bank->bank;
+                                        }
+                                        ?>
+                                        <?= form_dropdown('bank_id', $bankname, set_value('bank'), 'class="form-control select2 tip" id="bank_id"  style="width:100%;" data-placeholder="Select a Bank" required="required"'); ?>
+                                    </div>
+
+                                    <!-- end dropdown bank
+
+                                    <div class="form-group">
+                                        <select style="width:100%;  id="pcc_type"
+                                        class="form-control pcc_type select2"
+                                        placeholder="<?= lang('card_type') ?>">
+                                        <option value="BCA EDC">BCA EDC</option>
+                                        <option
+                                            value="Mandiri EDC">Mandiri EDC</option>
+                                        <option value="BNI EDC">BNI EDC</option>
+
+                                        </select>
+                                    </div>-->
+                                </div>
+
                             </div>
                             <div class="prefnumber_"  style="display:none;">
                                 <div class="form-group   col-xs-10">

@@ -20,10 +20,26 @@ class Pos extends MY_Controller {
         echo json_encode($rowjson);
 
     }
+
+    function getEDCPOS(){
+        $edctype = $this->input->get('edctype');
+        $rowjson = $this->site->getEDC($this->site->getStoreID(),$edctype);
+        echo json_encode($rowjson);
+    }
+
+
     function getPaidbyid() {
         $saleid = $this->input->get('padibyid');
+        $edc = $this->input->get('edc');
+        if (strpos($edc, 'TRANS') !== false) {
+            $edc='BANK TRANSFER';
+        } else
+        {
+            $edc='BANK EDC';
+        }
+        $typeedc = $this->site->getEDC($this->site->getStoreID(),$edc);
         $obj = $this->site->getPaidHtml($saleid);
-
+        array_push( $obj,$typeedc);
         echo json_encode($obj);
 
     }
@@ -38,7 +54,7 @@ class Pos extends MY_Controller {
 		$date = date('Y-m-d');
 
         $dates = date('dmY',strtotime($date));
-        $salesreturno =  $this->pos_model->getLastNo($dates,$this->site->getStoreCode(),'R');
+        $salesreturno =  $this->pos_model->getLastSalesNo($dates,$this->site->getStoreCode(),'R');
 		$customer_id = 1;
 		$customer='joni wkwk';
 		$grand_total=1000;
@@ -197,7 +213,8 @@ class Pos extends MY_Controller {
            // $date = $eid ? $this->input->post('date') : date('Y-m-d H:i:s');salesdate
             $date = $eid ? $this->input->post('date') : date('Y-m-d H:i:s');
             $dates = date('dmY',strtotime($date));
-            $salesno =  $this->pos_model->getLastNo($dates,$this->site->getStoreCode(),'');
+            $salesno =  $this->pos_model->getLastSalesNo($dates,$this->site->getStoreCode(),'');
+            $fakturpajak=$this->pos_model->getLastFakturPajak($date,$this->site->getStorePKP());
             $customer_id = $this->input->post('customer_id');
             $customer_details = $this->pos_model->getCustomerByID($customer_id);
             $customer = $customer_details->name;
@@ -321,8 +338,8 @@ class Pos extends MY_Controller {
                         'total' => $v_total,
                         );
 
-                    $total += $v_total;//$item_net_price * $item_quantity;
-
+                    $total +=$subtotal;// $v_total;//$item_net_price * $item_quantity;
+                    $product_discount+=($item_quantity*$unit_price)*($disc_persen/100);
                 }
             }
             if (empty($products)) {
@@ -343,7 +360,8 @@ class Pos extends MY_Controller {
             } else {
                 $order_discount_id = NULL;
             }
-            $total_discount = $this->tec->formatDecimal($order_discount + $product_discount);
+           // $total_discount = $this->tec->formatDecimal($order_discount + $product_discount);
+            $total_discount = $this->tec->formatDecimal($product_discount);
 
             if($this->input->post('order_tax')) {
                 $order_tax_id = $this->input->post('order_tax');
@@ -383,6 +401,7 @@ class Pos extends MY_Controller {
             //alert($total);
             $data = array(
                 'salesno' => $salesno,
+                'nofaktur_pajak'=>$fakturpajak,
                 'date' => $date,
                 'customer_id' => $customer_id,
                 'customer_name' => $customer,
@@ -621,7 +640,7 @@ class Pos extends MY_Controller {
 			$this->data['storeid'] =$storeid;
 			$this->data['mfas'] = $this->site->getMFAByStoreID($storeid);
 			$this->data['banks'] = $this->site->getBank();
-			$this->data['edcs'] = $this->site->getEDC();
+			$this->data['edcs'] = $this->site->getEDC($storeid,'BANK EDC');
 			$this->data['paidBys'] = $this->site->getPaidBy();
             //$this->data['tanggal'] = $tglKode=date('dmY',strtotime($tanggal));
             $this->data['dates'] = date('dmY');
@@ -642,6 +661,7 @@ class Pos extends MY_Controller {
             $this->data['order_printers'] = $printers;
 
             if ($saleid = $this->input->get('print', true)) {
+
                 if ($inv = $this->pos_model->getSaleByID($saleid)) {
                     if ($this->session->userdata('store_id') != $inv->store_id) {
                         $this->session->set_flashdata('error', lang('access_denied'));
@@ -652,6 +672,8 @@ class Pos extends MY_Controller {
                     $this->data['rows'] = $this->pos_model->getAllSaleItems($saleid);
                     $this->data['customer'] = $this->pos_model->getCustomerByID($inv->customer_id);
                     $this->data['store'] = $this->site->getStoreByID($inv->store_id);
+
+
                     $this->data['inv'] = $inv;
                     $this->data['print'] = $saleid;
                     $this->data['payments'] = $this->pos_model->getAllSalePayments($saleid);
@@ -1007,6 +1029,8 @@ class Pos extends MY_Controller {
         $this->data['created_by'] = $this->site->getUser($inv->created_by);
         $this->data['printer'] = $this->site->getPrinterByID($this->Settings->printer);
         $this->data['store'] = $this->site->getStoreByID($inv->store_id);
+
+        $this->data['brands'] =  $this->pos_model->getGroupBrand($sale_id);
         $this->data['page_title'] = lang("invoice");
         $this->load->view($this->theme.'pos/'.($this->Settings->print_img ? 'eview' : 'view'), $this->data);
 
